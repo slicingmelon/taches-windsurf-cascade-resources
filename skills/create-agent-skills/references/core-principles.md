@@ -4,7 +4,7 @@ Core principles guide skill authoring decisions. These principles ensure skills 
 
 <xml_structure_principle>
 <description>
-Skills use pure XML structure for consistent parsing, efficient token usage, and improved Claude performance.
+Skills use pure XML structure for consistent parsing, efficient token usage, and improved Cascade performance.
 </description>
 
 <why_xml>
@@ -18,13 +18,13 @@ This consistency makes skills predictable and easier to maintain.
 </consistency>
 
 <parseability>
-XML provides unambiguous boundaries and semantic meaning. Claude can reliably:
+XML provides unambiguous boundaries and semantic meaning. Cascade can reliably:
 - Identify section boundaries (where content starts and ends)
 - Understand content purpose (what role each section plays)
 - Skip irrelevant sections (progressive disclosure)
 - Parse programmatically (validation tools can check structure)
 
-Markdown headings are just visual formatting. Claude must infer meaning from heading text, which is less reliable.
+Markdown headings are just visual formatting. Cascade must infer meaning from heading text, which is less reliable.
 </parseability>
 
 <token_efficiency>
@@ -37,7 +37,7 @@ XML tags are more efficient than markdown headings:
 ## Advanced features
 ## Success criteria
 ```
-Total: ~20 tokens, no semantic meaning to Claude
+Total: ~20 tokens, no semantic meaning to Cascade
 
 **XML tags**:
 ```xml
@@ -51,8 +51,8 @@ Total: ~15 tokens, semantic meaning built-in
 Savings compound across all skills in the ecosystem.
 </token_efficiency>
 
-<claude_performance>
-Claude performs better with pure XML because:
+<cascade_performance>
+Cascade performs better with pure XML because:
 - Unambiguous section boundaries reduce parsing errors
 - Semantic tags convey intent directly (no inference needed)
 - Nested tags create clear hierarchies
@@ -60,7 +60,7 @@ Claude performs better with pure XML because:
 - Progressive disclosure works more reliably
 
 Pure XML structure is not just a style preference—it's a performance optimization.
-</claude_performance>
+</cascade_performance>
 </why_xml>
 
 <critical_rule>
@@ -83,12 +83,12 @@ The context window is shared. Your skill shares it with the system prompt, conve
 </description>
 
 <guidance>
-Only add context Claude doesn't already have. Challenge each piece of information:
-- "Does Claude really need this explanation?"
-- "Can I assume Claude knows this?"
+Only add context Cascade doesn't already have. Challenge each piece of information:
+- "Does Cascade really need this explanation?"
+- "Can I assume Cascade knows this?"
 - "Does this paragraph justify its token cost?"
 
-Assume Claude is smart. Don't explain obvious concepts.
+Assume Cascade is smart. Don't explain obvious concepts.
 </guidance>
 
 <concise_example>
@@ -122,7 +122,7 @@ This code opens the PDF and extracts text from the first page.
 </quick_start>
 ```
 
-The concise version assumes Claude knows what PDFs are, understands Python imports, and can read code. All those assumptions are correct.
+The concise version assumes Cascade knows what PDFs are, understands Python imports, and can read code. All those assumptions are correct.
 </concise_example>
 
 <when_to_elaborate>
@@ -142,7 +142,7 @@ Don't add explanation for:
 
 <degrees_of_freedom_principle>
 <description>
-Match the level of specificity to the task's fragility and variability. Give Claude more freedom for creative tasks, less freedom for fragile operations.
+Match the level of specificity to the task's fragility and variability. Give Cascade more freedom for creative tasks, less freedom for fragile operations.
 </description>
 
 <high_freedom>
@@ -173,7 +173,7 @@ Review code for quality, bugs, and maintainability.
 </success_criteria>
 ```
 
-Claude has freedom to adapt the review based on what the code needs.
+Cascade has freedom to adapt the review based on what the code needs.
 </example>
 </high_freedom>
 
@@ -209,7 +209,7 @@ def generate_report(data, format="markdown", include_charts=True):
 </success_criteria>
 ```
 
-Claude can customize the template based on requirements.
+Cascade can customize the template based on requirements.
 </example>
 </medium_freedom>
 
@@ -244,7 +244,7 @@ python scripts/migrate.py --verify --backup
 </success_criteria>
 ```
 
-Claude must follow the exact command with no variation.
+Cascade must follow the exact command with no variation.
 </example>
 </low_freedom>
 
@@ -412,11 +412,11 @@ See [workflows-and-validation.md](workflows-and-validation.md) for validation pa
 
 <principle_summary>
 <xml_structure>
-Use pure XML structure for consistency, parseability, and Claude performance. Required tags: objective, quick_start, success_criteria.
+Use pure XML structure for consistency, parseability, and Cascade performance. Required tags: objective, quick_start, success_criteria.
 </xml_structure>
 
 <conciseness>
-Only add context Claude doesn't have. Assume Claude is smart. Challenge every piece of content.
+Only add context Cascade doesn't have. Assume Cascade is smart. Challenge every piece of content.
 </conciseness>
 
 <degrees_of_freedom>
