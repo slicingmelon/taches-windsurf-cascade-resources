@@ -1,6 +1,6 @@
-# Meta-Prompting System for Claude Code
+# Meta-Prompting System for Windsurf Cascade
 
-A systematic approach to building complex software with Claude Code by delegating prompt engineering to Claude itself.
+A systematic approach to building complex software with Windsurf Cascade by delegating prompt engineering to Cascade itself.
 
 ## The Problem
 
@@ -14,7 +14,7 @@ When building complex features, most people either:
 
 This system separates **analysis** from **execution**:
 
-1. **Analysis Phase** (main context): Tell Claude what you want in natural language. It asks clarifying questions, analyzes your codebase, and generates a rigorous, specification-grade prompt.
+1. **Analysis Phase** (main context): Tell Cascade what you want in natural language. It asks clarifying questions, analyzes your codebase, and generates a rigorous, specification-grade prompt.
 
 2. **Execution Phase** (fresh sub-agent): The generated prompt runs in a clean context window, producing high-quality implementation on the first try.
 
@@ -37,8 +37,8 @@ Most developers don't naturally think through all these dimensions. This system 
 **Install globally** - commands work in any directory:
 
 ```bash
-cp create-prompt.md ~/.claude/commands/
-cp run-prompt.md ~/.claude/commands/
+cp create-prompt.md ~/.codeium/windsurf/global_workflows/
+cp run-prompt.md ~/.codeium/windsurf/global_workflows/
 ```
 
 **Create prompts directory per-project** (optional - created automatically if missing):
@@ -59,10 +59,10 @@ The `/create-prompt` and `/run-prompt` commands are available everywhere. Each p
 /create-prompt I want to build a dashboard for user analytics with real-time graphs
 
 # 2. Answer clarifying questions (if asked)
-# Claude will ask about specifics: data sources, chart types, frameworks, etc.
+# Cascade will ask about specifics: data sources, chart types, frameworks, etc.
 
 # 3. Review and confirm
-# Claude shows you what it understood and asks if you want to proceed
+# Cascade shows you what it understood and asks if you want to proceed
 
 # 4. Choose execution strategy
 # After prompt is created, you get options:
@@ -94,12 +94,12 @@ The `/create-prompt` and `/run-prompt` commands are available everywhere. Each p
 
 ### Advanced: Multiple Prompts
 
-For complex projects, Claude may break your request into multiple prompts:
+For complex projects, Cascade may break your request into multiple prompts:
 
 **Parallel execution** (independent tasks):
 
 ```bash
-# Claude detects independent modules and offers:
+# Cascade detects independent modules and offers:
 # 1. Run all prompts in parallel now (launches 3 sub-agents simultaneously)
 # 2. Run prompts sequentially instead
 # 3. Review/edit prompts first
@@ -108,7 +108,7 @@ For complex projects, Claude may break your request into multiple prompts:
 **Sequential execution** (dependent tasks):
 
 ```bash
-# Claude detects dependencies and offers:
+# Cascade detects dependencies and offers:
 # 1. Run prompts sequentially now (one completes before next starts)
 # 2. Run first prompt only
 # 3. Review/edit prompts first
@@ -119,7 +119,7 @@ For complex projects, Claude may break your request into multiple prompts:
 **Global commands, per-project prompts:**
 
 ```
-~/.claude/commands/          # Install once
+~/.codeium/windsurf/global_workflows/  # Install once
   create-prompt.md
   run-prompt.md
 
@@ -151,7 +151,7 @@ This level of systematic thinking is hard to maintain manually, especially when 
 
 ## The Context Advantage
 
-With Claude Max plan, token usage doesn't matter. What matters is **context quality**.
+With a high-context Cascade setup, token usage matters less than **context quality**.
 
 **Without meta-prompting:**
 
@@ -174,7 +174,7 @@ With Claude Max plan, token usage doesn't matter. What matters is **context qual
 
 4. **Trust the system** - It asks "what to avoid and why", defines success criteria, and includes verification steps you might forget
 
-5. **Use parallel execution** - If Claude detects independent tasks, running them in parallel saves time without token concerns
+5. **Use parallel execution** - If Cascade detects independent tasks, running them in parallel saves time without token concerns
 
 ## How It Works Under the Hood
 
@@ -205,7 +205,7 @@ With Claude Max plan, token usage doesn't matter. What matters is **context qual
 
 ## Credits
 
-Developed by TÂCHES for systematic, high-quality Claude Code workflows.
+Developed by TÂCHES for systematic, high-quality Windsurf Cascade workflows.
 
 ---
 

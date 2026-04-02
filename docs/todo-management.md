@@ -1,4 +1,4 @@
-# Todo Management System for Claude Code
+# Todo Management System for Windsurf Cascade
 
 Capture ideas mid-conversation without derailing your current work.
 
@@ -40,14 +40,14 @@ Lists todos, lets you select one, loads full context, and removes it from the li
 1. Shows compact numbered list of todos with dates
 2. Waits for selection
 3. Loads full todo context (Problem/Files/Solution)
-4. Checks for project workflows (CLAUDE.md, skills)
+4. Checks for project workflows (AGENTS.md, skills)
 5. Suggests relevant workflow if found
 6. Removes todo from list
 7. Ready to start work
 
 **Workflow detection:**
-- Reads `CLAUDE.md` for project-specific patterns
-- Checks `.claude/skills/` for matching workflows
+- Reads `AGENTS.md` for project-specific patterns
+- Checks `.windsurf/skills/` for matching workflows
 - Matches file paths to domains (plugins/, mcp-servers/, etc.)
 - Presents choice: invoke skill or work directly
 
@@ -64,7 +64,7 @@ Lists todos, lets you select one, loads full context, and removes it from the li
 - "Need to investigate..." → logged with file paths
 
 **Resume with full context:**
-- Claude gets the full picture weeks later
+- Cascade gets the full picture weeks later
 - No "what was I thinking?" moments
 - Exact files, line numbers, and reasoning intact
 
@@ -73,8 +73,8 @@ Lists todos, lets you select one, loads full context, and removes it from the li
 **Install globally** - these commands work in any directory:
 
 ```bash
-cp add-to-todos.md ~/.claude/commands/
-cp check-todos.md ~/.claude/commands/
+cp add-to-todos.md ~/.codeium/windsurf/global_workflows/
+cp check-todos.md ~/.codeium/windsurf/global_workflows/
 ```
 
 Once installed, the commands are available everywhere. Each project gets its own `TO-DOS.md` in its working directory - todos are captured per-project automatically.
@@ -84,7 +84,7 @@ Once installed, the commands are available everywhere. Each project gets its own
 **Mid-conversation capture:**
 ```
 You: "Fix the login redirect bug"
-Claude: [investigating auth.ts, finds the issue]
+Cascade: [investigating auth.ts, finds the issue]
 You: "Actually, I notice the error handling here is messy too.
       Let's just fix the redirect for now."
 You: /add-to-todos refactor error handling
@@ -104,7 +104,7 @@ Outstanding Todos:
 
 Reply with number: 1
 
-Claude loads:
+Cascade loads:
 - **Refactor error handling in auth flow** - Error handling in
   authentication is inconsistent and hard to debug. **Problem:**
   Try-catch blocks scattered across auth.ts, no centralized error
@@ -119,7 +119,7 @@ Claude loads:
 
 **Global (install once, use everywhere):**
 ```
-~/.claude/commands/
+~/.codeium/windsurf/global_workflows/
   add-to-todos.md        # Add todo command
   check-todos.md         # Check/select todo command
 ```
@@ -139,7 +139,7 @@ Each project maintains its own todo list. The commands are global, the todos are
 
 - Use `/add-to-todos` liberally - capture anything you might revisit
 - Include specific line numbers when you find them
-- The structured format ensures Claude has enough context later
+- The structured format ensures Cascade has enough context later
 - Todos are removed when work begins - if incomplete, re-add with new context
 - Empty sections are automatically cleaned up
 
