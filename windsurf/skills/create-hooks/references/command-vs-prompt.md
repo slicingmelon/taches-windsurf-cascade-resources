@@ -4,6 +4,8 @@ How to implement Windsurf Cascade hooks: choosing and writing hook scripts.
 
 > **Note**: Windsurf has only one hook type — **command**. All hooks are shell commands. There is no "prompt hook" type. If you need intelligent/LLM-based decisions, implement them by calling an external API from within your script.
 
+> **Windows note**: Replace `python3` with `python` in all script examples below.
+
 ## Decision Tree
 
 ```

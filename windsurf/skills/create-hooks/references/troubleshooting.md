@@ -2,6 +2,8 @@
 
 Common issues and solutions when working with Windsurf Cascade hooks.
 
+> **Windows note**: Replace `python3` with `python` in all commands below.
+
 ---
 
 ## Hook Not Triggering

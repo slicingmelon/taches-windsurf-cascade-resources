@@ -4,6 +4,8 @@ Complete guide to configuring Windsurf Cascade hooks.
 
 > **Note**: Windsurf hooks do NOT have a "matcher" concept. Each hook event fires for all occurrences of that event. If you need event-specific filtering (e.g., only act on Python files), implement that logic inside your script.
 
+> **Windows note**: Replace `python3` with `python` in all examples below.
+
 ---
 
 ## Configuration File Locations
