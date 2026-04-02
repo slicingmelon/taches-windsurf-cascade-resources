@@ -69,14 +69,14 @@ get_repo_tree() {
 dest_for_path() {
     local path="$1"
     case "$path" in
-        .windsurf/workflows/*)
-            echo "${WORKFLOWS_DIR}/${path#.windsurf/workflows/}"
+        windsurf/workflows/*)
+            echo "${WORKFLOWS_DIR}/${path#windsurf/workflows/}"
             ;;
-        .windsurf/skills/*)
-            echo "${SKILLS_DIR}/${path#.windsurf/skills/}"
+        windsurf/skills/*)
+            echo "${SKILLS_DIR}/${path#windsurf/skills/}"
             ;;
-        .windsurf/rules/*)
-            echo "${RULES_DIR}/${path#.windsurf/rules/}"
+        windsurf/rules/*)
+            echo "${RULES_DIR}/${path#windsurf/rules/}"
             ;;
         *)
             echo ""
@@ -142,7 +142,7 @@ do_install() {
     tree=$(get_repo_tree)
 
     local filtered
-    filtered=$(echo "$tree" | grep -E "^\.windsurf/(workflows|skills|rules)/")
+    filtered=$(echo "$tree" | grep -E "^windsurf/(workflows|skills|rules)/")
     local count
     count=$(echo "$filtered" | wc -l | tr -d ' ')
 
@@ -173,7 +173,7 @@ do_update() {
     tree=$(get_repo_tree)
 
     local filtered
-    filtered=$(echo "$tree" | grep -E "^\.windsurf/(workflows|skills|rules)/")
+    filtered=$(echo "$tree" | grep -E "^windsurf/(workflows|skills|rules)/")
     local count
     count=$(echo "$filtered" | wc -l | tr -d ' ')
 

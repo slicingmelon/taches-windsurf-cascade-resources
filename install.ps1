@@ -66,7 +66,7 @@ function Get-RepoTree {
 }
 
 function Get-WindsurfFiles($tree) {
-    return $tree | Where-Object { $_.path -match "^\.windsurf/(workflows|skills|rules)/" }
+    return $tree | Where-Object { $_.path -match "^windsurf/(workflows|skills|rules)/" }
 }
 
 function Install-Files($files) {
@@ -76,13 +76,13 @@ function Install-Files($files) {
         $path = $file.path
 
         # Determine target dir
-        if ($path -match "^\.windsurf/workflows/(.+)$") {
+        if ($path -match "^windsurf/workflows/(.+)$") {
             $rel = $Matches[1]
             $dest = Join-Path $TARGET_DIRS["workflows"] $rel.Replace("/", "\")
-        } elseif ($path -match "^\.windsurf/skills/(.+)$") {
+        } elseif ($path -match "^windsurf/skills/(.+)$") {
             $rel = $Matches[1]
             $dest = Join-Path $TARGET_DIRS["skills"] $rel.Replace("/", "\")
-        } elseif ($path -match "^\.windsurf/rules/(.+)$") {
+        } elseif ($path -match "^windsurf/rules/(.+)$") {
             $rel = $Matches[1]
             $dest = Join-Path $TARGET_DIRS["rules"] $rel.Replace("/", "\")
         } else {

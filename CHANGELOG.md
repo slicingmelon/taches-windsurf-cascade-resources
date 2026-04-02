@@ -17,6 +17,10 @@ Initial Windsurf-compatible release. Full port of [taches-cc-resources](https://
 - Both installers target `~/.codeium/windsurf/` (global), save a manifest for clean uninstall, and pull files directly from GitHub without requiring a local clone
 - **`the-pirate-bay` skill** — search The Pirate Bay via apibay.org JSON API, extract magnet links, browse top torrents by category
 
+### Changed
+
+- **Renamed `.windsurf/` → `windsurf/`** — Source folder no longer uses dot-prefix, so opening this repo in Windsurf no longer auto-loads these workflows and skills as active config. Install globally via the installer scripts; do not rely on the local folder loading.
+
 ### Fixed — Windsurf Compatibility
 
 #### Structural fixes
