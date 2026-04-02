@@ -57,6 +57,7 @@ function Get-RepoTree {
     Write-Host "  Fetching file list from GitHub..." -ForegroundColor DarkGray
     try {
         $response = Invoke-RestMethod -Uri $API_URL -Headers @{ "User-Agent" = "taches-installer" }
+        $script:COMMIT_SHA = $response.sha
         return $response.tree | Where-Object { $_.type -eq "blob" }
     } catch {
         Write-Host "  ERROR: Could not fetch repo tree. Check your internet connection." -ForegroundColor Red
@@ -109,15 +110,17 @@ function Install-Files($files) {
 }
 
 function Save-Manifest($installedFiles) {
+    $manifestPath = [string]$MANIFEST
     $manifest = @{
         installed_at = (Get-Date -Format "yyyy-MM-ddTHH:mm:ssZ")
         repo         = $REPO
         branch       = $BRANCH
-        files        = $installedFiles
+        commit       = if ($script:COMMIT_SHA) { $script:COMMIT_SHA } else { "unknown" }
+        files        = @($installedFiles)
     }
-    $manifest | ConvertTo-Json -Depth 10 | Set-Content $MANIFEST -Encoding UTF8
+    $manifest | ConvertTo-Json -Depth 10 | Set-Content -Path $manifestPath -Encoding UTF8
     Write-Host ""
-    Write-Host "  Manifest saved: $MANIFEST" -ForegroundColor DarkGray
+    Write-Host "  Manifest saved: $manifestPath" -ForegroundColor DarkGray
 }
 
 function Invoke-Install {
