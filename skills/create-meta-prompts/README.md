@@ -1,6 +1,6 @@
 # Create Meta-Prompts
 
-The skill-based evolution of the [meta-prompting](../../prompts/meta-prompting/) system. Creates prompts optimized for Claude-to-Claude pipelines with improved dependency detection and structured outputs.
+The skill-based evolution of the [meta-prompting](../../prompts/meta-prompting/) system. Creates prompts optimized for Cascade-to-Cascade pipelines with improved dependency detection and structured outputs.
 
 ## The Problem
 
@@ -14,7 +14,7 @@ Complex tasks benefit from staged workflows: research first, then plan, then imp
 
 ### `/create-meta-prompt [description]`
 
-Describe your task. Claude creates a prompt optimized for its purpose.
+Describe your task. Cascade creates a prompt optimized for its purpose.
 
 **What it does:**
 1. Determines purpose: Do (execute), Plan (strategize), or Research (gather info)
@@ -39,12 +39,12 @@ Describe your task. Claude creates a prompt optimized for its purpose.
 
 **Install command** (global):
 ```bash
-cp commands/*.md ~/.claude/commands/
+cp commands/*.md ~/.codeium/windsurf/global_workflows/
 ```
 
 **Install skill**:
 ```bash
-cp -r skills/* ~/.claude/skills/
+cp -r skills/* ~/.codeium/windsurf/skills/
 ```
 
 ## Example Workflow

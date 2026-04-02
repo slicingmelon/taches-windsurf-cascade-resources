@@ -123,7 +123,7 @@ After intake complete:
 [Use Option X / Build custom] because [reasoning]
 
 ### Implementation Context
-<claude_context>
+<cascade_context>
 <if_use>
 - package: [exact package name and version]
 - install: [installation command]
@@ -142,7 +142,7 @@ After intake complete:
 - patterns: [usage patterns]
 - testing: [how to test integration]
 </integration>
-</claude_context>
+</cascade_context>
 
 **Next Action:** Prototype with chosen library, evaluate deeper, or spec out custom build
 
@@ -173,7 +173,7 @@ Save the research to a file:
 - Maintenance status is verified (not abandoned)
 - License compatibility is checked
 - Build vs. use tradeoff is honest
-- Implementation context has exact package info Claude needs
+- Implementation context has exact package info Cascade needs
 - Recommendation saves complexity without creating technical debt
 - Output saved to artifacts/research/ directory
 </success_criteria>

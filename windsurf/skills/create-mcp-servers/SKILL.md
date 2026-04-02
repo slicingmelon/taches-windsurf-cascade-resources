@@ -1,10 +1,10 @@
 ---
 name: create-mcp-servers
-description: Create Model Context Protocol (MCP) servers that expose tools, resources, and prompts to Claude. Use when building custom integrations, APIs, data sources, or any server that Claude should interact with via the MCP protocol. Supports both TypeScript and Python implementations.
+description: Create Model Context Protocol (MCP) servers that expose tools, resources, and prompts to Windsurf Cascade. Use when building custom integrations, APIs, data sources, or any server that Cascade should interact with via the MCP protocol. Supports both TypeScript and Python implementations.
 ---
 
 <objective>
-MCP servers extend Claude's capabilities by exposing tools, resources, and prompts. This skill guides creation of production-ready MCP servers with API integrations, OAuth authentication, response optimization, and proper installation in Claude Code and Claude Desktop.
+MCP servers extend Cascade's capabilities by exposing tools, resources, and prompts. This skill guides creation of production-ready MCP servers with API integrations, OAuth authentication, response optimization, and proper installation in Windsurf.
 </objective>
 
 <essential_principles>
@@ -40,8 +40,8 @@ On-demand: 4 meta-tools (discover, get_schema, execute, continue) + operations.j
 
 <context>
 MCP servers expose:
-- **Tools**: Functions Claude can call (API requests, file operations, calculations)
-- **Resources**: Data Claude can read (files, database records, API responses)
+- **Tools**: Functions Cascade can call (API requests, file operations, calculations)
+- **Resources**: Data Cascade can read (files, database records, API responses)
 - **Prompts**: Reusable prompt templates with arguments
 
 Standard location: `~/Developer/mcp/{server-name}/`
@@ -154,8 +154,7 @@ Full troubleshooting: workflows/troubleshoot-server.md
 
 <success_criteria>
 A production-ready MCP server has:
-- Valid configuration in Claude Code (`claude mcp list` shows ✓ Connected)
-- Valid configuration in Claude Desktop config
+- Valid configuration in Windsurf MCP config (`claude mcp list` shows ✓ Connected)
 - Environment variables set securely in ~/.zshrc
 - Architecture matches operation count
 - OAuth stdio isolation if applicable

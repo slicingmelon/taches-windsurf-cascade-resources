@@ -110,7 +110,7 @@ After intake complete:
 - [ ] [Question that still needs answering]
 
 ### Implementation Context
-<claude_context>
+<cascade_context>
 <application>
 - when_to_use: [situations where this applies]
 - when_not_to_use: [situations to avoid this]
@@ -126,7 +126,7 @@ After intake complete:
 - conflicts_with: [incompatible approaches]
 - alternatives: [other options to consider]
 </integration>
-</claude_context>
+</cascade_context>
 
 **Next Action:** Apply this knowledge to implementation, research specific aspect deeper, or run /plan/project
 
@@ -157,7 +157,7 @@ Save the research to a file:
 - Goes beyond surface-level (not just "what" but "why" and "when")
 - Identifies limitations honestly
 - Synthesizes into actionable understanding
-- Implementation context is specific enough for Claude to apply
+- Implementation context is specific enough for Cascade to apply
 - Clear about what's still unknown
 - Output saved to artifacts/research/ directory
 </success_criteria>

@@ -112,7 +112,7 @@ After intake complete:
 2. [Way to differentiate]: [tradeoff]
 
 ### Implementation Context
-<claude_context>
+<cascade_context>
 <insights>
 - table_stakes: [features we must have to compete]
 - differentiators: [features that would set us apart]
@@ -127,7 +127,7 @@ After intake complete:
 - underserved: [user segments not well served]
 - overserved: [segments with too many options]
 </positioning>
-</claude_context>
+</cascade_context>
 
 **Next Action:** Deep dive on specific competitor, validate gaps with user research, or run /plan/brief to define our approach
 

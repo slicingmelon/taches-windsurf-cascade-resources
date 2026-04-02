@@ -108,7 +108,7 @@ After intake complete:
 [Option Y] - choose this if [specific condition]
 
 ### Implementation Context
-<claude_context>
+<cascade_context>
 <chosen>
 - option: [chosen option name]
 - install: [how to install/set up]
@@ -126,7 +126,7 @@ After intake complete:
 - gotchas: [common issues with this option]
 - testing: [how to verify it works]
 </integration>
-</claude_context>
+</cascade_context>
 
 **Next Action:** Implement chosen option, prototype to validate, or gather more info on specific option
 
@@ -158,6 +158,6 @@ Save the research to a file:
 - Ratings are justified, not arbitrary
 - Recommendation follows from analysis
 - Runner-up provides contingency
-- Implementation context gives Claude everything needed to proceed
+- Implementation context gives Cascade everything needed to proceed
 - Output saved to artifacts/research/ directory
 </success_criteria>

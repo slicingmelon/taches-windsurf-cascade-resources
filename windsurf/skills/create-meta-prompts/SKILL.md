@@ -1,10 +1,10 @@
 ---
 name: create-meta-prompts
-description: Create optimized prompts for Claude-to-Claude pipelines with research, planning, and execution stages. Use when building prompts that produce outputs for other prompts to consume, or when running multi-stage workflows (research -> plan -> implement).
+description: Create optimized prompts for Cascade-to-Cascade pipelines with research, planning, and execution stages. Use when building prompts that produce outputs for other prompts to consume, or when running multi-stage workflows (research -> plan -> implement).
 ---
 
 <objective>
-Create prompts optimized for Claude-to-Claude communication in multi-stage workflows. Outputs are structured with XML and metadata for efficient parsing by subsequent prompts.
+Create prompts optimized for Cascade-to-Cascade communication in multi-stage workflows. Outputs are structured with XML and metadata for efficient parsing by subsequent prompts.
 
 Every execution produces a `SUMMARY.md` for quick human scanning without reading full outputs.
 
@@ -28,7 +28,7 @@ Each prompt gets its own folder in `.prompts/` with its output artifacts, enabli
 ├── 001-auth-research/
 │   ├── completed/
 │   │   └── 001-auth-research.md    # Prompt (archived after run)
-│   ├── auth-research.md            # Full output (XML for Claude)
+│   ├── auth-research.md            # Full output (XML for Cascade)
 │   └── SUMMARY.md                  # Executive summary (markdown for human)
 ├── 002-auth-plan/
 │   ├── completed/

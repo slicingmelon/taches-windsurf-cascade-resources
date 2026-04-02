@@ -1,16 +1,16 @@
 ---
 name: create-slash-commands
-description: Expert guidance for creating Claude Code slash commands. Use when working with slash commands, creating custom commands, understanding command structure, or learning YAML configuration.
+description: Expert guidance for creating Windsurf Cascade slash commands. Use when working with slash commands, creating custom commands, understanding command structure, or learning YAML configuration.
 ---
 
 <objective>
-Create effective slash commands for Claude Code that enable users to trigger reusable prompts with `/command-name` syntax. Slash commands expand as prompts in the current conversation, allowing teams to standardize workflows and operations. This skill teaches you to structure commands with XML tags, YAML frontmatter, dynamic context loading, and intelligent argument handling.
+Create effective slash commands for Windsurf Cascade that enable users to trigger reusable prompts with `/command-name` syntax. Slash commands expand as prompts in the current conversation, allowing teams to standardize workflows and operations. This skill teaches you to structure commands with XML tags, YAML frontmatter, dynamic context loading, and intelligent argument handling.
 </objective>
 
 <quick_start>
 
 <workflow>
-1. Create `.claude/commands/` directory (project) or use `~/.claude/commands/` (personal)
+1. Create `.windsurf/workflows/` directory (project) or use `~/.codeium/windsurf/global_workflows/` (global)
 2. Create `command-name.md` file
 3. Add YAML frontmatter (at minimum: `description`)
 4. Write command prompt
@@ -18,7 +18,7 @@ Create effective slash commands for Claude Code that enable users to trigger reu
 </workflow>
 
 <example>
-**File**: `.claude/commands/optimize.md`
+**File**: `.windsurf/workflows/optimize.md`
 
 ```markdown
 ---
@@ -30,7 +30,7 @@ Analyze the performance of this code and suggest three specific optimizations:
 
 **Usage**: `/optimize`
 
-Claude receives the expanded prompt and analyzes the code in context.
+Cascade receives the expanded prompt and analyzes the code in context.
 </example>
 </quick_start>
 
@@ -240,13 +240,13 @@ Review PR #$1 with priority $2 and assign to $3.
 
 <file_structure>
 
-**Project commands**: `.claude/commands/`
+**Project workflows**: `.windsurf/workflows/`
 - Shared with team via version control
 - Shows `(project)` in `/help` list
 
-**Personal commands**: `~/.claude/commands/`
+**Global workflows**: `~/.codeium/windsurf/global_workflows/`
 - Available across all your projects
-- Shows `(user)` in `/help` list
+- Shows `(global)` in workflow listings
 
 **File naming**: `command-name.md` → invoked as `/command-name`
 </file_structure>
@@ -264,7 +264,7 @@ Shown in the `/help` command list.
 </field>
 
 <field name="allowed-tools">
-**Optional** - Restricts which tools Claude can use
+**Optional** - Restricts which tools Cascade can use
 
 ```yaml
 allowed-tools: Bash(git add:*), Bash(git status:*), Bash(git commit:*)
@@ -282,7 +282,7 @@ If omitted: All tools available
 <arguments>
 <all_arguments_string>
 
-**Command file**: `.claude/commands/fix-issue.md`
+**Command file**: `.windsurf/workflows/fix-issue.md`
 ```markdown
 ---
 description: Fix issue following coding standards
@@ -293,12 +293,12 @@ Fix issue #$ARGUMENTS following our coding standards
 
 **Usage**: `/fix-issue 123 high-priority`
 
-**Claude receives**: "Fix issue #123 high-priority following our coding standards"
+**Cascade receives**: "Fix issue #123 high-priority following our coding standards"
 </all_arguments_string>
 
 <positional_arguments_syntax>
 
-**Command file**: `.claude/commands/review-pr.md`
+**Command file**: `.windsurf/workflows/review-pr.md`
 ```markdown
 ---
 description: Review PR with priority and assignee
@@ -309,7 +309,7 @@ Review PR #$1 with priority $2 and assign to $3
 
 **Usage**: `/review-pr 456 high alice`
 
-**Claude receives**: "Review PR #456 with priority high and assign to alice"
+**Cascade receives**: "Review PR #456 with priority high and assign to alice"
 
 See [references/arguments.md](references/arguments.md) for advanced patterns.
 </positional_arguments_syntax>
@@ -357,7 +357,7 @@ Review the implementation in @ src/utils/helpers.js
 ```
 (Note: Remove the space after @ in actual usage)
 
-Claude can access the referenced file's contents.
+Cascade can access the referenced file's contents.
 </file_references>
 
 <best_practices>
@@ -593,8 +593,8 @@ See [references/patterns.md](references/patterns.md) for more examples.
    - Don't under-specify complex commands
 
 6. **Save the file**:
-   - Project: `.claude/commands/command-name.md`
-   - Personal: `~/.claude/commands/command-name.md`
+   - Project: `.windsurf/workflows/command-name.md`
+   - Global: `~/.codeium/windsurf/global_workflows/command-name.md`
 </generation_protocol>
 
 <success_criteria>

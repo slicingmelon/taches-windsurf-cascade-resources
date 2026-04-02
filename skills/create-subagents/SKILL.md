@@ -1,10 +1,10 @@
 ---
 name: create-subagents
-description: Expert guidance for creating, building, and using Claude Code subagents and the Task tool. Use when working with subagents, setting up agent configurations, understanding how agents work, or using the Task tool to launch specialized agents.
+description: Expert guidance for creating, building, and using Windsurf Cascade subagents and the Task tool. Use when working with subagents, setting up agent configurations, understanding how agents work, or using the Task tool to launch specialized agents.
 ---
 
 <objective>
-Subagents are specialized Claude instances that run in isolated contexts with focused roles and limited tool access. This skill teaches you how to create effective subagents, write strong system prompts, configure tool access, and orchestrate multi-agent workflows using the Task tool.
+Subagents are specialized Cascade instances that run in isolated contexts with focused roles and limited tool access. This skill teaches you how to create effective subagents, write strong system prompts, configure tool access, and orchestrate multi-agent workflows using the Task tool.
 
 Subagents enable delegation of complex tasks to specialized agents that operate autonomously without user interaction, returning their final output to the main conversation.
 </objective>
@@ -13,7 +13,7 @@ Subagents enable delegation of complex tasks to specialized agents that operate 
 <workflow>
 1. Run `/agents` command
 2. Select "Create New Agent"
-3. Choose project-level (`.claude/agents/`) or user-level (`~/.claude/agents/`)
+3. Choose project-level (`.windsurf/agents/`) or user-level (`~/.codeium/windsurf/agents/`)
 4. Define the subagent:
    - **name**: lowercase-with-hyphens
    - **description**: When should this subagent be used?
@@ -52,8 +52,8 @@ Provide specific, actionable feedback with file:line references.
 <file_structure>
 | Type | Location | Scope | Priority |
 |------|----------|-------|----------|
-| **Project** | `.claude/agents/` | Current project only | Highest |
-| **User** | `~/.claude/agents/` | All projects | Lower |
+| **Project** | `.windsurf/agents/` | Current project only | Highest |
+| **User** | `~/.codeium/windsurf/agents/` | All projects | Lower |
 | **Plugin** | Plugin's `agents/` dir | All projects | Lowest |
 
 Project-level subagents override user-level when names conflict.
@@ -67,7 +67,7 @@ Project-level subagents override user-level when names conflict.
 
 <field name="description">
 - Natural language description of purpose
-- Include when Claude should invoke this subagent
+- Include when Cascade should invoke this subagent
 - Used for automatic subagent selection
 </field>
 
@@ -173,7 +173,7 @@ Tailor instructions to the specific task domain. Don't create generic "helper" s
 </system_prompt_guidelines>
 
 <subagent_xml_structure>
-Subagent.md files are system prompts consumed only by Claude. Like skills and slash commands, they should use pure XML structure for optimal parsing and token efficiency.
+Subagent.md files are system prompts consumed only by Cascade. Like skills and slash commands, they should use pure XML structure for optimal parsing and token efficiency.
 
 <recommended_tags>
 Common tags for subagent structure:
@@ -212,7 +212,7 @@ For XML structure principles and token efficiency details, see @skills/create-ag
 
 <invocation>
 <automatic>
-Claude automatically selects subagents based on the `description` field when it matches the current task.
+Cascade automatically selects subagents based on the `description` field when it matches the current task.
 </automatic>
 
 <explicit>
@@ -239,8 +239,8 @@ Run `/agents` for an interactive interface to:
 
 <manual_editing>
 You can also edit subagent files directly:
-- Project: `.claude/agents/subagent-name.md`
-- User: `~/.claude/agents/subagent-name.md`
+- Project: `.windsurf/agents/subagent-name.md`
+- User: `~/.codeium/windsurf/agents/subagent-name.md`
 </manual_editing>
 </management>
 
