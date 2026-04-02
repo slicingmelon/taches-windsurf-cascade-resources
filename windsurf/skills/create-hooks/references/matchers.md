@@ -4,6 +4,8 @@ Complete guide to configuring Windsurf Cascade hooks.
 
 > **Note**: Windsurf hooks do NOT have a "matcher" concept. Each hook event fires for all occurrences of that event. If you need event-specific filtering (e.g., only act on Python files), implement that logic inside your script.
 
+> **Windows note**: Replace `python3` with `python` in all examples below.
+
 ---
 
 ## Configuration File Locations
@@ -123,16 +125,66 @@ Keep hook scripts alongside the config for portability:
 .windsurf/
   hooks.json              ← config
   hooks/
+    py                    ← cross-platform Python launcher (see below)
     log_input.py          ← logging script
     block_dangerous.py    ← safety script
     format_on_save.py     ← formatter script
     restrict_access.py    ← access control script
 ```
 
-Reference scripts with relative paths from workspace root:
+Reference scripts using the launcher:
 
 ```json
 {
-  "command": "python3 .windsurf/hooks/block_dangerous.py"
+  "command": ".windsurf/hooks/py .windsurf/hooks/block_dangerous.py"
+}
+```
+
+### Cross-platform Python launcher
+
+Create `.windsurf/hooks/py` (macOS/Linux) and `.windsurf/hooks/py.cmd` (Windows) so hooks work on all platforms without hardcoding `python3` or `python`.
+
+**`.windsurf/hooks/py`** (macOS/Linux — make executable with `chmod +x`):
+```bash
+#!/usr/bin/env sh
+# Finds python3 or python and runs the given script with it
+if command -v python3 >/dev/null 2>&1; then
+    exec python3 "$@"
+elif command -v python >/dev/null 2>&1; then
+    exec python "$@"
+else
+    echo "Error: Python not found. Install Python 3." >&2
+    exit 1
+fi
+```
+
+**`.windsurf/hooks/py.cmd`** (Windows):
+```bat
+@echo off
+where python3 >nul 2>&1
+if %errorlevel% == 0 (
+    python3 %*
+    exit /b %errorlevel%
+)
+where python >nul 2>&1
+if %errorlevel% == 0 (
+    python %*
+    exit /b %errorlevel%
+)
+echo Error: Python not found. Install Python 3. 1>&2
+exit /b 1
+```
+
+Windsurf runs hooks through the system shell — on Windows it uses `cmd.exe`, so `.cmd` files are picked up automatically when you call `.windsurf/hooks/py` (Windows resolves `py` → `py.cmd`).
+
+> **Alternative**: If you know your team is Windows-only, just use `python` everywhere. If macOS/Linux only, use `python3`.
+
+### Without a launcher
+
+If you prefer not to use a launcher, use the shell's built-in fallback directly in `hooks.json`:
+
+```json
+{
+  "command": "python3 .windsurf/hooks/script.py || python .windsurf/hooks/script.py"
 }
 ```

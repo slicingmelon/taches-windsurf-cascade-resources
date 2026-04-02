@@ -2,6 +2,8 @@
 
 Common issues and solutions when working with Windsurf Cascade hooks.
 
+> **Windows**: Use `.windsurf/hooks/py` launcher instead of `python3` — see [Hook Configuration Reference](./matchers.md#cross-platform-python-launcher).
+
 ---
 
 ## Hook Not Triggering
