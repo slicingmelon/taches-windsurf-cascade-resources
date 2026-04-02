@@ -1,206 +1,196 @@
 ---
 name: create-hooks
-description: Expert guidance for creating, configuring, and using Claude Code hooks. Use when working with hooks, setting up event listeners, validating commands, automating workflows, adding notifications, or understanding hook types (PreToolUse, PostToolUse, Stop, SessionStart, UserPromptSubmit, etc).
+description: Expert guidance for creating, configuring, and using Windsurf Cascade hooks. Use when working with hooks, setting up event listeners, validating commands, automating workflows, adding notifications, or understanding hook types (pre_run_command, post_write_code, pre_user_prompt, post_cascade_response, etc).
 ---
 
 <objective>
-Hooks are event-driven automation for Claude Code that execute shell commands or LLM prompts in response to tool usage, session events, and user interactions. This skill teaches you how to create, configure, and debug hooks for validating commands, automating workflows, injecting context, and implementing custom completion criteria.
+Hooks are event-driven automation for Windsurf Cascade that execute shell commands in response to file reads, code writes, terminal commands, MCP tool use, and user prompts. This skill teaches you how to create, configure, and debug hooks for validating commands, automating workflows, restricting access, and logging Cascade actions.
 
-Hooks provide programmatic control over Claude's behavior without modifying core code, enabling project-specific automation, safety checks, and workflow customization.
+Hooks provide programmatic control over Cascade's behavior without modifying core code, enabling project-specific automation, safety checks, and workflow customization.
 </objective>
 
 <context>
-Hooks are shell commands or LLM-evaluated prompts that execute in response to Claude Code events. They operate within an event hierarchy: events (PreToolUse, PostToolUse, Stop, etc.) trigger matchers (tool patterns) which fire hooks (commands or prompts). Hooks can block actions, modify tool inputs, inject context, or simply observe and log Claude's operations.
+Hooks are shell commands that execute in response to Cascade events. Each hook receives a JSON object via stdin describing the action, executes your script, and communicates results via exit code and stdout. Pre-hooks can block actions by exiting with code `2`. Post-hooks observe and log but cannot block.
+
+Hooks are loaded and merged from three levels: system → user → workspace.
 </context>
 
 <quick_start>
 <workflow>
 1. Create hooks config file:
-   - Project: `.claude/hooks.json`
-   - User: `~/.claude/hooks.json`
+   - Workspace: `.windsurf/hooks.json` (version-controlled, project-specific)
+   - User: `~/.codeium/windsurf/hooks.json` (personal preferences)
+   - System: `C:\ProgramData\Windsurf\hooks.json` (Windows) / `/Library/Application Support/Windsurf/hooks.json` (macOS)
 2. Choose hook event (when it fires)
-3. Choose hook type (command or prompt)
-4. Configure matcher (which tools trigger it)
-5. Test with `claude --debug`
+3. Write a shell script or inline command
+4. Test by triggering the relevant Cascade action
 </workflow>
 
 <example>
-**Log all bash commands**:
+**Log all terminal commands**:
 
-`.claude/hooks.json`:
+`.windsurf/hooks.json`:
 ```json
 {
   "hooks": {
-    "PreToolUse": [
+    "pre_run_command": [
       {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "jq -r '\"\\(.tool_input.command) - \\(.tool_input.description // \\\"No description\\\")\"' >> ~/.claude/bash-log.txt"
-          }
-        ]
+        "command": "python3 .windsurf/hooks/log_commands.py",
+        "show_output": true
       }
     ]
   }
 }
+```
+
+`log_commands.py`:
+```python
+import sys, json
+data = json.loads(sys.stdin.read())
+cmd = data.get("tool_info", {}).get("command_line", "")
+with open("cascade-commands.log", "a") as f:
+    f.write(cmd + "\n")
 ```
 
 This hook:
-- Fires before (`PreToolUse`) every `Bash` tool use
-- Executes a `command` (not an LLM prompt)
-- Logs command + description to a file
+- Fires before (`pre_run_command`) every terminal command
+- Logs the command to a file
+- Does NOT block (exits with 0)
 </example>
 </quick_start>
 
-<hook_types>
+<hook_events>
 | Event | When it fires | Can block? |
 |-------|---------------|------------|
-| **PreToolUse** | Before tool execution | Yes |
-| **PostToolUse** | After tool execution | No |
-| **UserPromptSubmit** | User submits a prompt | Yes |
-| **Stop** | Claude attempts to stop | Yes |
-| **SubagentStop** | Subagent attempts to stop | Yes |
-| **SessionStart** | Session begins | No |
-| **SessionEnd** | Session ends | No |
-| **PreCompact** | Before context compaction | Yes |
-| **Notification** | Claude needs input | No |
+| **pre_read_code** | Before Cascade reads a file | Yes |
+| **post_read_code** | After Cascade reads a file | No |
+| **pre_write_code** | Before Cascade writes/modifies a file | Yes |
+| **post_write_code** | After Cascade writes/modifies a file | No |
+| **pre_run_command** | Before Cascade runs a terminal command | Yes |
+| **post_run_command** | After Cascade runs a terminal command | No |
+| **pre_mcp_tool_use** | Before Cascade calls an MCP tool | Yes |
+| **post_mcp_tool_use** | After Cascade calls an MCP tool | No |
+| **pre_user_prompt** | Before Cascade processes a user prompt | Yes |
+| **post_cascade_response** | After Cascade completes a response (async) | No |
+| **post_cascade_response_with_transcript** | After response, includes full transcript | No |
+| **post_setup_worktree** | After a worktree is set up | No |
 
-Blocking hooks can return `"decision": "block"` to prevent the action. See [references/hook-types.md](references/hook-types.md) for detailed use cases.
-</hook_types>
+**Blocking**: Pre-hooks exit with code `2` to block. Post-hooks cannot block (action already occurred).
+</hook_events>
 
 <hook_anatomy>
-<hook_type name="command">
-**Type**: Executes a shell command
+Each hook entry accepts:
 
-**Use when**:
-- Simple validation (check file exists)
-- Logging (append to file)
-- External tools (formatters, linters)
-- Desktop notifications
-
-**Input**: JSON via stdin
-**Output**: JSON via stdout (optional)
+| Field | Type | Description |
+|-------|------|-------------|
+| `command` | string | Shell command to execute. Can be any executable with arguments. |
+| `show_output` | boolean | Whether to display hook stdout/stderr in Cascade UI. Useful for debugging. |
+| `working_directory` | string | Optional. Directory to run command from. Defaults to workspace root. |
 
 ```json
 {
-  "type": "command",
-  "command": "/path/to/script.sh",
-  "timeout": 30000
+  "hooks": {
+    "post_write_code": [
+      {
+        "command": "python3 .windsurf/hooks/format.py",
+        "show_output": false,
+        "working_directory": "/absolute/path/to/project"
+      }
+    ]
+  }
 }
 ```
-</hook_type>
 
-<hook_type name="prompt">
-**Type**: LLM evaluates a prompt
-
-**Use when**:
-- Complex decision logic
-- Natural language validation
-- Context-aware checks
-- Reasoning required
-
-**Input**: Prompt with `$ARGUMENTS` placeholder
-**Output**: JSON with `decision` and `reason`
-
-```json
-{
-  "type": "prompt",
-  "prompt": "Evaluate if this command is safe: $ARGUMENTS\n\nReturn JSON: {\"decision\": \"approve\" or \"block\", \"reason\": \"explanation\"}"
-}
-```
-</hook_type>
+**Note**: There is no `type: "prompt"` in Windsurf hooks. All hooks are shell commands. Complex validation logic must be implemented in your script.
 </hook_anatomy>
 
-<matchers>
-Matchers filter which tools trigger the hook:
+<input_schemas>
+All hooks receive a JSON object via stdin with these common fields:
 
 ```json
 {
-  "matcher": "Bash",           // Exact match
-  "matcher": "Write|Edit",     // Multiple tools (regex OR)
-  "matcher": "mcp__.*",        // All MCP tools
-  "matcher": "mcp__memory__.*" // Specific MCP server
+  "agent_action_name": "pre_run_command",
+  "trajectory_id": "...",
+  "execution_id": "...",
+  "timestamp": "2025-01-15T10:30:00Z",
+  "tool_info": { ... }
 }
 ```
 
-**No matcher**: Hook fires for all tools
+**Event-specific `tool_info`**:
+
+`pre_read_code` / `post_read_code`:
+```json
+{ "file_path": "/path/to/file.py" }
+```
+
+`pre_write_code` / `post_write_code`:
 ```json
 {
-  "hooks": {
-    "UserPromptSubmit": [
-      {
-        "hooks": [...]  // No matcher - fires on every user prompt
-      }
-    ]
-  }
+  "file_path": "/path/to/file.py",
+  "edits": [{ "old_string": "...", "new_string": "..." }]
 }
 ```
-</matchers>
 
-<input_output>
-Hooks receive JSON via stdin with session info, current directory, and event-specific data. Blocking hooks can return JSON to approve/block actions or modify inputs.
-
-**Example output** (blocking hooks):
+`pre_run_command` / `post_run_command`:
 ```json
 {
-  "decision": "approve" | "block",
-  "reason": "Why this decision was made"
+  "command_line": "npm install package-name",
+  "cwd": "/path/to/project"
 }
 ```
 
-See [references/input-output-schemas.md](references/input-output-schemas.md) for complete schemas for each hook type.
-</input_output>
-
-<environment_variables>
-Available in hook commands:
-
-| Variable | Value |
-|----------|-------|
-| `$CLAUDE_PROJECT_DIR` | Project root directory |
-| `${CLAUDE_PLUGIN_ROOT}` | Plugin directory (plugin hooks only) |
-| `$ARGUMENTS` | Hook input JSON (prompt hooks only) |
-
-**Example**:
+`pre_mcp_tool_use` / `post_mcp_tool_use`:
 ```json
 {
-  "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/validate.sh"
+  "mcp_server_name": "github",
+  "mcp_tool_name": "create_issue",
+  "mcp_tool_arguments": { ... }
 }
 ```
-</environment_variables>
+
+`pre_user_prompt`:
+```json
+{ "user_prompt": "can you run the echo hello command" }
+```
+
+`post_cascade_response`:
+```json
+{ "response": "### Planner Response\n\n..." }
+```
+</input_schemas>
+
+<blocking>
+Pre-hooks block actions by **exiting with code `2`**. Any output to stderr is shown to Cascade as the reason.
+
+```python
+import sys, json
+
+data = json.loads(sys.stdin.read())
+cmd = data.get("tool_info", {}).get("command_line", "")
+
+if "git push --force" in cmd:
+    print("Blocked: force push is not allowed.", file=sys.stderr)
+    sys.exit(2)  # Blocks the action
+
+sys.exit(0)  # Allows the action
+```
+
+**Exit codes**:
+- `0` → Success, action proceeds
+- `2` → Block (pre-hooks only) — Cascade sees stderr message
+- Any other → Error, action proceeds normally
+</blocking>
 
 <common_patterns>
-**Desktop notification when input needed**:
+**Block dangerous commands**:
 ```json
 {
   "hooks": {
-    "Notification": [
+    "pre_run_command": [
       {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "osascript -e 'display notification \"Claude needs input\" with title \"Claude Code\"'"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-**Block destructive git commands**:
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "Check if this command is destructive: $ARGUMENTS\n\nBlock if it contains: 'git push --force', 'rm -rf', 'git reset --hard'\n\nReturn: {\"decision\": \"approve\" or \"block\", \"reason\": \"explanation\"}"
-          }
-        ]
+        "command": "python3 .windsurf/hooks/block_dangerous.py",
+        "show_output": true
       }
     ]
   }
@@ -211,34 +201,51 @@ Available in hook commands:
 ```json
 {
   "hooks": {
-    "PostToolUse": [
+    "post_write_code": [
       {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "prettier --write $CLAUDE_PROJECT_DIR",
-            "timeout": 10000
-          }
-        ]
+        "command": "python3 .windsurf/hooks/format_on_save.py",
+        "show_output": false
       }
     ]
   }
 }
 ```
 
-**Add context at session start**:
+**Restrict file access**:
 ```json
 {
   "hooks": {
-    "SessionStart": [
+    "pre_read_code": [
       {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "echo '{\"hookSpecificOutput\": {\"hookEventName\": \"SessionStart\", \"additionalContext\": \"Current sprint: Sprint 23. Focus: User authentication\"}}'"
-          }
-        ]
+        "command": "python3 .windsurf/hooks/restrict_access.py",
+        "show_output": true
+      }
+    ]
+  }
+}
+```
+
+**Log all Cascade responses**:
+```json
+{
+  "hooks": {
+    "post_cascade_response": [
+      {
+        "command": "python3 .windsurf/hooks/log_responses.py"
+      }
+    ]
+  }
+}
+```
+
+**Block policy-violating prompts**:
+```json
+{
+  "hooks": {
+    "pre_user_prompt": [
+      {
+        "command": "python3 .windsurf/hooks/validate_prompt.py",
+        "show_output": true
       }
     ]
   }
@@ -247,86 +254,70 @@ Available in hook commands:
 </common_patterns>
 
 <debugging>
-Always test hooks with the debug flag:
+Test hooks by triggering the relevant Cascade action (read a file, run a command, etc.) and observe the output. Set `"show_output": true` during development to see hook stdout/stderr in the Cascade UI.
+
+Validate your JSON config before use:
 ```bash
-claude --debug
+python3 -m json.tool .windsurf/hooks.json
 ```
 
-This shows which hooks matched, command execution, and output. See [references/troubleshooting.md](references/troubleshooting.md) for common issues and solutions.
+See [references/troubleshooting.md](references/troubleshooting.md) for common issues and solutions.
 </debugging>
 
 <reference_guides>
 **Hook types and events**: [references/hook-types.md](references/hook-types.md)
 - Complete list of hook events
 - When each event fires
-- Input/output schemas for each
+- Input schemas for each event
 - Blocking vs non-blocking hooks
-
-**Command vs Prompt hooks**: [references/command-vs-prompt.md](references/command-vs-prompt.md)
-- Decision tree: which type to use
-- Command hook patterns and examples
-- Prompt hook patterns and examples
-- Performance considerations
-
-**Matchers and patterns**: [references/matchers.md](references/matchers.md)
-- Regex patterns for tool matching
-- MCP tool matching patterns
-- Multiple tool matching
-- Debugging matcher issues
 
 **Input/Output schemas**: [references/input-output-schemas.md](references/input-output-schemas.md)
 - Complete schema for each hook type
 - Field descriptions and types
-- Hook-specific output fields
 - Example JSON for each event
 
 **Working examples**: [references/examples.md](references/examples.md)
-- Desktop notifications
-- Command validation
-- Auto-formatting workflows
-- Logging and audit trails
-- Stop logic patterns
-- Session context injection
+- Logging all Cascade actions
+- Restricting file access
+- Blocking dangerous commands
+- Auto-formatting after edits
+- Validating user prompts
 
 **Troubleshooting**: [references/troubleshooting.md](references/troubleshooting.md)
 - Hooks not triggering
-- Command execution failures
-- Prompt hook issues
+- Script execution failures
 - Permission problems
-- Timeout handling
 - Debug workflow
 </reference_guides>
 
 <security_checklist>
 **Critical safety requirements**:
 
-- **Infinite loop prevention**: Check `stop_hook_active` flag in Stop hooks to prevent recursive triggering
-- **Timeout configuration**: Set reasonable timeouts (default: 60s) to prevent hanging
-- **Permission validation**: Ensure hook scripts have executable permissions (`chmod +x`)
-- **Path safety**: Use absolute paths with `$CLAUDE_PROJECT_DIR` to avoid path injection
-- **JSON validation**: Validate hook config with `jq` before use to catch syntax errors
-- **Selective blocking**: Be conservative with blocking hooks to avoid workflow disruption
+- **Permission validation**: Ensure hook scripts have executable permissions (`chmod +x`) on macOS/Linux
+- **Path safety**: Use absolute paths or paths relative to workspace root
+- **JSON validation**: Validate hook config with `python3 -m json.tool` before use
+- **Selective blocking**: Be conservative with pre-hooks to avoid disrupting workflow
+- **Script errors**: Non-zero exit codes other than `2` let actions proceed — handle exceptions in scripts
+- **`show_output` during dev**: Set `true` while developing, `false` for production to keep UI clean
 
 **Testing protocol**:
 ```bash
-# Always test with debug flag first
-claude --debug
-
 # Validate JSON config
-jq . .claude/hooks.json
+python3 -m json.tool .windsurf/hooks.json
+
+# Test script manually
+echo '{"agent_action_name":"pre_run_command","tool_info":{"command_line":"echo test","cwd":"/tmp"},"trajectory_id":"test","execution_id":"test","timestamp":"2025-01-01T00:00:00Z"}' | python3 .windsurf/hooks/your_script.py
 ```
 </security_checklist>
 
 <success_criteria>
 A working hook configuration has:
 
-- Valid JSON in `.claude/hooks.json` (validated with `jq`)
+- Valid JSON in `.windsurf/hooks.json` (validated with `python3 -m json.tool`)
 - Appropriate hook event selected for the use case
-- Correct matcher pattern that matches target tools
-- Command or prompt that executes without errors
-- Proper output schema (decision/reason for blocking hooks)
-- Tested with `--debug` flag showing expected behavior
-- No infinite loops in Stop hooks (checks `stop_hook_active` flag)
-- Reasonable timeout set (especially for external commands)
-- Executable permissions on script files if using file paths
+- Script reads JSON from stdin correctly
+- Pre-hooks exit `2` to block, `0` to allow
+- `show_output: true` set during development for visibility
+- Tested by triggering the actual Cascade action
+- Executable permissions set on script files (macOS/Linux)
 </success_criteria>

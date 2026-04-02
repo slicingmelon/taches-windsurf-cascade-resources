@@ -84,7 +84,7 @@ Write to `whats-next.md` in the current working directory using the format below
 [All essential knowledge for continuing:
 - Key decisions and trade-offs
 - Constraints, requirements, or boundaries
-- Important discoveries, gotcas, or edge cases
+- Important discoveries, gotchas, or edge cases
 - Environment, configuration, or setup details
 - Assumptions requiring validation
 - References to documentation, sources, or resources]

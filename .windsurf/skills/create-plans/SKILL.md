@@ -198,13 +198,15 @@ If yes: `git init`
 </context_scan>
 
 <domain_expertise>
-**Domain expertise lives in `~/.claude/skills/expertise/`**
+**Domain expertise lives in `~/.codeium/windsurf/skills/expertise/` (global) or `.windsurf/skills/expertise/` (project-local)**
 
 Before creating roadmap or phase plans, determine if domain expertise should be loaded.
 
 <scan_domains>
 ```bash
-ls ~/.claude/skills/expertise/ 2>/dev/null
+ls ~/.codeium/windsurf/skills/expertise/ 2>/dev/null
+# Or for project-local expertise:
+ls .windsurf/skills/expertise/ 2>/dev/null
 ```
 
 This reveals available domain expertise (e.g., macos-apps, iphone-apps, unity-games, nextjs-ecommerce).
@@ -259,7 +261,9 @@ When domain selected, use intelligent loading:
 
 **Step 1: Read domain SKILL.md**
 ```bash
-cat ~/.claude/skills/expertise/[domain]/SKILL.md 2>/dev/null
+cat ~/.codeium/windsurf/skills/expertise/[domain]/SKILL.md 2>/dev/null
+# Or for project-local:
+cat .windsurf/skills/expertise/[domain]/SKILL.md 2>/dev/null
 ```
 
 This loads core principles and routing guidance (~5k tokens).
@@ -284,8 +288,8 @@ Based on the phase being planned (from ROADMAP), load ONLY the references mentio
 
 ```bash
 # Example: Planning a database phase
-cat ~/.claude/skills/expertise/macos-apps/references/core-data.md
-cat ~/.claude/skills/expertise/macos-apps/references/swift-conventions.md
+cat ~/.codeium/windsurf/skills/expertise/macos-apps/references/core-data.md
+cat ~/.codeium/windsurf/skills/expertise/macos-apps/references/swift-conventions.md
 ```
 
 **Context efficiency:**

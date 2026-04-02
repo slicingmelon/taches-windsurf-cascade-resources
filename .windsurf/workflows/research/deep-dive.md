@@ -8,6 +8,8 @@ Conduct a deep-dive investigation into the topic provided by the user (or the cu
 Go beyond surface-level understanding. Synthesize multiple sources into comprehensive knowledge.
 </objective>
 
+<intake_gate>
+
 <context_analysis>
 First, analyze the user's message to extract what's already provided:
 - The topic to investigate

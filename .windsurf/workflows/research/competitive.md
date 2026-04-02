@@ -8,6 +8,8 @@ Research competitive landscape for the topic provided by the user (or the curren
 Understand who else solves this problem, how they do it, and where the opportunities are.
 </objective>
 
+<intake_gate>
+
 <context_analysis>
 First, analyze the user's message to extract what's already provided:
 - The product/feature space

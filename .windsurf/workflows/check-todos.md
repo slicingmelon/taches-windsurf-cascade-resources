@@ -25,7 +25,7 @@ description: List outstanding todos and select one to work on
 
 4. Check for established workflows:
    - Read CLAUDE.md (if exists) to understand project-specific workflows and rules
-   - Look for `.claude/skills/` directory
+   - Look for `.windsurf/skills/` directory
    - Match file paths in todo to domain patterns (`plugins/` → plugin workflow, `mcp-servers/` → MCP workflow)
    - Check CLAUDE.md for explicit workflow requirements for this type of work
 

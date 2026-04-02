@@ -30,7 +30,7 @@ Identify the skill from conversation context:
 - Check which SKILL.md was recently referenced
 - Examine current task context
 
-Set: `SKILL_NAME=[skill-name]` and `SKILL_DIR=./skills/$SKILL_NAME`
+Set: `SKILL_NAME=[skill-name]` and `SKILL_DIR=.windsurf/skills/$SKILL_NAME`
 
 If unclear, ask the user.
 </step_1>

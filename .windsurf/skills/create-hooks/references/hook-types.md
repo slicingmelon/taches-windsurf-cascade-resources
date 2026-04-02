@@ -1,463 +1,248 @@
 # Hook Types and Events
 
-Complete reference for all Claude Code hook events.
+Complete reference for all Windsurf Cascade hook events.
 
-## PreToolUse
+Windsurf provides 12 hook events covering the full agent workflow. All hooks are shell commands — there is no `type: "prompt"` LLM hook type in Windsurf.
 
-**When it fires**: Before any tool is executed
+---
 
-**Can block**: Yes
+## Common Input Structure
 
-**Input schema**:
+All hooks receive JSON via stdin with these common fields:
+
 ```json
 {
-  "session_id": "abc123",
-  "transcript_path": "~/.claude/projects/.../session.jsonl",
-  "cwd": "/current/working/directory",
-  "permission_mode": "default",
-  "hook_event_name": "PreToolUse",
-  "tool_name": "Bash",
-  "tool_input": {
-    "command": "npm install",
-    "description": "Install dependencies"
-  }
-}
-```
-
-**Output schema** (to control execution):
-```json
-{
-  "decision": "approve" | "block",
-  "reason": "Explanation",
-  "permissionDecision": "allow" | "deny" | "ask",
-  "permissionDecisionReason": "Why",
-  "updatedInput": {
-    "command": "npm install --save-exact"
-  }
-}
-```
-
-**Use cases**:
-- Validate commands before execution
-- Block dangerous operations
-- Modify tool inputs
-- Log command attempts
-- Ask user for confirmation
-
-**Example**: Block force pushes to main
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "Check if this git command is safe: $ARGUMENTS\n\nBlock if: force push to main/master\n\nReturn: {\"decision\": \"approve\" or \"block\", \"reason\": \"explanation\"}"
-          }
-        ]
-      }
-    ]
-  }
+  "agent_action_name": "pre_run_command",
+  "trajectory_id": "abc-123",
+  "execution_id": "xyz-456",
+  "timestamp": "2025-01-15T10:30:00Z",
+  "tool_info": { ... }
 }
 ```
 
 ---
 
-## PostToolUse
+## pre_read_code
 
-**When it fires**: After a tool completes execution
+**When it fires**: Before Cascade reads a file or directory
 
-**Can block**: No (tool already executed)
+**Can block**: Yes (exit code 2)
 
-**Input schema**:
+**tool_info**:
 ```json
-{
-  "session_id": "abc123",
-  "transcript_path": "~/.claude/projects/.../session.jsonl",
-  "cwd": "/current/working/directory",
-  "permission_mode": "default",
-  "hook_event_name": "PostToolUse",
-  "tool_name": "Write",
-  "tool_input": {
-    "file_path": "/path/to/file.js",
-    "content": "..."
-  },
-  "tool_output": "File created successfully"
-}
+{ "file_path": "/path/to/file.py" }
 ```
 
-**Output schema**:
-```json
-{
-  "systemMessage": "Optional message to display",
-  "suppressOutput": false
-}
-```
-
-**Use cases**:
-- Auto-format code after Write/Edit
-- Run tests after code changes
-- Update documentation
-- Trigger CI builds
-- Send notifications
-
-**Example**: Auto-format after edits
-```json
-{
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "prettier --write $CLAUDE_PROJECT_DIR",
-            "timeout": 10000
-          }
-        ]
-      }
-    ]
-  }
-}
-```
+**Use cases**: Restrict file access, log reads, enforce read permissions
 
 ---
 
-## UserPromptSubmit
+## post_read_code
 
-**When it fires**: User submits a prompt to Claude
-
-**Can block**: Yes
-
-**Input schema**:
-```json
-{
-  "session_id": "abc123",
-  "transcript_path": "~/.claude/projects/.../session.jsonl",
-  "cwd": "/current/working/directory",
-  "permission_mode": "default",
-  "hook_event_name": "UserPromptSubmit",
-  "prompt": "Write a function to calculate factorial"
-}
-```
-
-**Output schema**:
-```json
-{
-  "decision": "approve" | "block",
-  "reason": "Explanation",
-  "systemMessage": "Message to user"
-}
-```
-
-**Use cases**:
-- Validate prompt format
-- Block inappropriate requests
-- Preprocess user input
-- Add context to prompts
-- Enforce prompt templates
-
-**Example**: Require issue numbers in prompts
-```json
-{
-  "hooks": {
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "Check if prompt mentions an issue number (e.g., #123 or PROJ-456): $ARGUMENTS\n\nIf no issue number: {\"decision\": \"block\", \"reason\": \"Please include issue number\"}\nOtherwise: {\"decision\": \"approve\", \"reason\": \"ok\"}"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
----
-
-## Stop
-
-**When it fires**: Claude attempts to stop working
-
-**Can block**: Yes
-
-**Input schema**:
-```json
-{
-  "session_id": "abc123",
-  "transcript_path": "~/.claude/projects/.../session.jsonl",
-  "cwd": "/current/working/directory",
-  "permission_mode": "default",
-  "hook_event_name": "Stop",
-  "stop_hook_active": false
-}
-```
-
-**Output schema**:
-```json
-{
-  "decision": "block" | undefined,
-  "reason": "Why Claude should continue",
-  "continue": true,
-  "systemMessage": "Additional instructions"
-}
-```
-
-**Use cases**:
-- Verify all tasks completed
-- Check for errors that need fixing
-- Ensure tests pass before stopping
-- Validate deliverables
-- Custom completion criteria
-
-**Example**: Verify tests pass before stopping
-```json
-{
-  "hooks": {
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "npm test && echo '{\"decision\": \"approve\"}' || echo '{\"decision\": \"block\", \"reason\": \"Tests failing\"}'"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-**Important**: Check `stop_hook_active` to avoid infinite loops. If true, don't block again.
-
----
-
-## SubagentStop
-
-**When it fires**: A subagent attempts to stop
-
-**Can block**: Yes
-
-**Input schema**:
-```json
-{
-  "session_id": "abc123",
-  "transcript_path": "~/.claude/projects/.../session.jsonl",
-  "cwd": "/current/working/directory",
-  "permission_mode": "default",
-  "hook_event_name": "SubagentStop",
-  "stop_hook_active": false
-}
-```
-
-**Output schema**: Same as Stop
-
-**Use cases**:
-- Verify subagent completed its task
-- Check for errors in subagent output
-- Validate subagent deliverables
-- Ensure quality before accepting results
-
-**Example**: Check if code-reviewer provided feedback
-```json
-{
-  "hooks": {
-    "SubagentStop": [
-      {
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "Review the subagent transcript: $ARGUMENTS\n\nDid the code-reviewer provide:\n1. Specific issues found\n2. Severity ratings\n3. Remediation steps\n\nIf missing: {\"decision\": \"block\", \"reason\": \"Incomplete review\"}\nOtherwise: {\"decision\": \"approve\", \"reason\": \"Complete\"}"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
----
-
-## SessionStart
-
-**When it fires**: At the beginning of a Claude session
+**When it fires**: After Cascade successfully reads a file
 
 **Can block**: No
 
-**Input schema**:
+**tool_info**:
 ```json
-{
-  "session_id": "abc123",
-  "transcript_path": "~/.claude/projects/.../session.jsonl",
-  "cwd": "/current/working/directory",
-  "permission_mode": "default",
-  "hook_event_name": "SessionStart",
-  "source": "startup"
-}
+{ "file_path": "/path/to/file.py" }
 ```
 
-**Output schema**:
-```json
-{
-  "hookSpecificOutput": {
-    "hookEventName": "SessionStart",
-    "additionalContext": "Context to inject into session"
-  }
-}
-```
-
-**Use cases**:
-- Load project context
-- Inject sprint information
-- Set environment variables
-- Initialize state
-- Display welcome messages
-
-**Example**: Load current sprint context
-```json
-{
-  "hooks": {
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "cat $CLAUDE_PROJECT_DIR/.sprint-context.txt | jq -Rs '{\"hookSpecificOutput\": {\"hookEventName\": \"SessionStart\", \"additionalContext\": .}}'"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
+**Use cases**: Log successful reads, track file access patterns
 
 ---
 
-## SessionEnd
+## pre_write_code
 
-**When it fires**: When a Claude session ends
+**When it fires**: Before Cascade writes or modifies a file
 
-**Can block**: No (cannot prevent session end)
+**Can block**: Yes (exit code 2)
 
-**Input schema**:
+**tool_info**:
 ```json
 {
-  "session_id": "abc123",
-  "transcript_path": "~/.claude/projects/.../session.jsonl",
-  "cwd": "/current/working/directory",
-  "permission_mode": "default",
-  "hook_event_name": "SessionEnd",
-  "reason": "exit" | "error" | "timeout"
+  "file_path": "/path/to/file.py",
+  "edits": [
+    { "old_string": "def old():\n    pass", "new_string": "def new():\n    return True" }
+  ]
 }
 ```
 
-**Output schema**: None (hook output ignored)
-
-**Use cases**:
-- Save session state
-- Cleanup temporary files
-- Update logs
-- Send analytics
-- Archive transcripts
-
-**Example**: Archive session transcript
-```json
-{
-  "hooks": {
-    "SessionEnd": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "cp $transcript_path $CLAUDE_PROJECT_DIR/.claude/archives/$(date +%Y%m%d-%H%M%S).jsonl"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
+**Use cases**: Prevent writes to protected files, backup before changes, enforce naming conventions
 
 ---
 
-## PreCompact
+## post_write_code
 
-**When it fires**: Before context window compaction
-
-**Can block**: Yes
-
-**Input schema**:
-```json
-{
-  "session_id": "abc123",
-  "transcript_path": "~/.claude/projects/.../session.jsonl",
-  "cwd": "/current/working/directory",
-  "permission_mode": "default",
-  "hook_event_name": "PreCompact",
-  "trigger": "manual" | "auto",
-  "custom_instructions": "User's compaction instructions"
-}
-```
-
-**Output schema**:
-```json
-{
-  "decision": "approve" | "block",
-  "reason": "Explanation"
-}
-```
-
-**Use cases**:
-- Validate state before compaction
-- Save important context
-- Custom compaction logic
-- Prevent compaction at critical moments
-
----
-
-## Notification
-
-**When it fires**: Claude needs user input (awaiting response)
+**When it fires**: After Cascade writes or modifies a file
 
 **Can block**: No
 
-**Input schema**:
+**tool_info**:
 ```json
 {
-  "session_id": "abc123",
-  "transcript_path": "~/.claude/projects/.../session.jsonl",
-  "cwd": "/current/working/directory",
-  "permission_mode": "default",
-  "hook_event_name": "Notification"
+  "file_path": "/path/to/file.py",
+  "edits": [
+    { "old_string": "import os", "new_string": "import os\nimport sys" }
+  ]
 }
 ```
 
-**Output schema**: None
+**Use cases**: Run linters/formatters, run tests after changes, log modifications
 
-**Use cases**:
-- Desktop notifications
-- Sound alerts
-- Status bar updates
-- External notifications (Slack, etc.)
+---
 
-**Example**: macOS notification
+## pre_run_command
+
+**When it fires**: Before Cascade runs a terminal command
+
+**Can block**: Yes (exit code 2)
+
+**tool_info**:
 ```json
 {
-  "hooks": {
-    "Notification": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "osascript -e 'display notification \"Claude needs input\" with title \"Claude Code\"'"
-          }
-        ]
-      }
-    ]
+  "command_line": "npm install package-name",
+  "cwd": "/path/to/project"
+}
+```
+
+**Use cases**: Block dangerous commands, log all command executions, enforce allowed command lists
+
+---
+
+## post_run_command
+
+**When it fires**: After Cascade runs a terminal command
+
+**Can block**: No
+
+**tool_info**:
+```json
+{
+  "command_line": "npm install package-name",
+  "cwd": "/path/to/project"
+}
+```
+
+**Use cases**: Log command results, trigger follow-up actions
+
+---
+
+## pre_mcp_tool_use
+
+**When it fires**: Before Cascade calls an MCP tool
+
+**Can block**: Yes (exit code 2)
+
+**tool_info**:
+```json
+{
+  "mcp_server_name": "github",
+  "mcp_tool_name": "create_issue",
+  "mcp_tool_arguments": {
+    "owner": "my-org",
+    "repo": "my-repo",
+    "title": "Bug report",
+    "body": "Description"
   }
 }
 ```
+
+**Use cases**: Log MCP usage, restrict which MCP tools can be used, audit external API calls
+
+---
+
+## post_mcp_tool_use
+
+**When it fires**: After Cascade successfully calls an MCP tool
+
+**Can block**: No
+
+**tool_info**:
+```json
+{
+  "mcp_server_name": "github",
+  "mcp_tool_name": "list_commits",
+  "mcp_tool_arguments": { ... },
+  "mcp_result": "..."
+}
+```
+
+**Use cases**: Log MCP operations, track API usage, see MCP results
+
+---
+
+## pre_user_prompt
+
+**When it fires**: Before Cascade processes a user prompt
+
+**Can block**: Yes (exit code 2)
+
+**Note**: `show_output` does not apply to this hook.
+
+**tool_info**:
+```json
+{ "user_prompt": "can you run the echo hello command" }
+```
+
+**Use cases**: Log all user prompts for auditing, block policy-violating prompts
+
+---
+
+## post_cascade_response
+
+**When it fires**: Asynchronously after Cascade completes a response
+
+**Can block**: No
+
+**Note**: `show_output` does not apply to this hook. Triggered async — does not delay Cascade.
+
+**tool_info**:
+```json
+{
+  "response": "### Planner Response\n\nI'll help you create that file.\n\n..."
+}
+```
+
+**Use cases**: Log responses for auditing, analyze response patterns, send to external systems
+
+---
+
+## post_cascade_response_with_transcript
+
+**When it fires**: After response, includes full conversation transcript as JSONL file path
+
+**Can block**: No
+
+**tool_info**:
+```json
+{ "transcript_path": "/path/to/transcript.jsonl" }
+```
+
+**Use cases**: Compliance logging, full audit trails with context
+
+---
+
+## post_setup_worktree
+
+**When it fires**: After a git worktree is set up
+
+**Can block**: No
+
+**Use cases**: Initialize worktree-specific environments, run setup scripts
+
+---
+
+## Blocking Rules
+
+Only pre-hooks can block:
+- `pre_read_code`
+- `pre_write_code`
+- `pre_run_command`
+- `pre_mcp_tool_use`
+- `pre_user_prompt`
+
+**Exit codes**:
+- `0` → Success, action proceeds
+- `2` → Block — Cascade sees stderr as the reason
+- Any other → Error, action proceeds normally
