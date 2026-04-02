@@ -5,7 +5,7 @@ Real-world Windsurf Cascade hook configurations ready to use.
 All hooks go in `.windsurf/hooks.json` (workspace) or `~/.codeium/windsurf/hooks.json` (user).
 All hook scripts receive JSON via stdin and communicate via exit codes.
 
-> **Windows note**: Replace `python3` with `python` in all commands below.
+> **Windows**: Use `.windsurf/hooks/py` launcher instead of `python3` — see [Hook Configuration Reference](./matchers.md#cross-platform-python-launcher).
 
 ---
 
