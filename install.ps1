@@ -37,7 +37,7 @@ $BRANCH   = "main"
 $BASE_URL = "https://raw.githubusercontent.com/$REPO/$BRANCH"
 $API_URL  = "https://api.github.com/repos/$REPO/git/trees/${BRANCH}?recursive=1"
 
-$WINDSURF_DIR = Join-Path $HOME ".codeium\windsurf"
+$WINDSURF_DIR = Join-Path $env:USERPROFILE ".codeium\windsurf"
 $MANIFEST     = Join-Path $WINDSURF_DIR "taches-install-manifest.json"
 
 $TARGET_DIRS = @{
