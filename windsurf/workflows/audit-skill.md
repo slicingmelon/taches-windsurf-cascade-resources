@@ -9,8 +9,8 @@ This ensures skills follow proper structure (pure XML, required tags, progressiv
 </objective>
 
 <process>
-1. Read the skill at the path provided by the user
-2. Read the audit-skill skill from `.windsurf/skills/audit-skill/SKILL.md` for evaluation criteria
+1. Read the skill at the path provided by the user (SKILL.md and any referenced files)
+2. Read `.windsurf/skills/create-agent-skills/SKILL.md` to load the evaluation criteria and best practices
 3. Evaluate XML structure quality, required/conditional tags, anti-patterns
 4. Report detailed findings with file:line locations, compliance scores, and recommendations
 </process>

@@ -138,7 +138,7 @@ RETRIES = 5   # Why 5?
 <runtime_constraints>
 Skills run in code execution environment with platform-specific limitations:
 - **cascade.ai**: Can install packages from npm and PyPI
-- **Anthropic API**: No network access and no runtime package installation
+- **Other environments**: No network access and no runtime package installation
 </runtime_constraints>
 
 <guidance>

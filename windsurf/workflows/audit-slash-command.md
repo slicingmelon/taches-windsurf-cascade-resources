@@ -10,7 +10,7 @@ This ensures commands follow security, clarity, and effectiveness standards.
 
 <process>
 1. Read the command file at the path provided by the user
-2. Read the audit-slash-command skill from `.windsurf/skills/audit-slash-command/SKILL.md` for evaluation criteria
+2. Read `.windsurf/skills/create-slash-commands/SKILL.md` to load the evaluation criteria and best practices
 3. Evaluate the command against security, clarity, and effectiveness standards
 4. Report detailed findings with file:line locations, compliance scores, and recommendations
 </process>

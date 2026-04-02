@@ -480,7 +480,7 @@ npm run build
 
 ## Step 4: Configure Environment Variables
 
-**SECURITY CRITICAL:** NEVER ask Lex to paste secrets into chat. Secrets must never go through Anthropic's servers or appear in conversation history.
+**SECURITY CRITICAL:** NEVER ask Lex to paste secrets into chat. Secrets must never go through any AI provider's servers or appear in conversation history.
 
 ### Provide Exact Commands
 

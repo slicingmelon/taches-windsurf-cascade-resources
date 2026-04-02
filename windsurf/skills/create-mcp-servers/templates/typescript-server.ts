@@ -26,8 +26,8 @@ import * as path from "path";
 // =============================================================================
 
 const logFile = path.join(
-  process.env.HOME || "",
-  "Library/Logs/Claude/mcp-server-{SERVER_NAME}.log"
+  process.env.TMPDIR || process.env.TEMP || process.env.TMP || "/tmp",
+  "mcp-server-{SERVER_NAME}.log"
 );
 
 function log(level: string, message: string): void {
