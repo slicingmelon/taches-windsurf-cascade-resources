@@ -1,0 +1,4 @@
+# Override global gitignore to track .windsurf/ in this repo
+# (global gitignore typically excludes .windsurf/)
+!.windsurf/
+!.windsurf/**
