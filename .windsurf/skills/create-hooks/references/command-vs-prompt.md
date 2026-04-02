@@ -1,269 +1,178 @@
-# Command vs Prompt Hooks
+# Hook Scripting Guide
 
-Decision guide for choosing between command-based and prompt-based hooks.
+How to implement Windsurf Cascade hooks: choosing and writing hook scripts.
+
+> **Note**: Windsurf has only one hook type — **command**. All hooks are shell commands. There is no "prompt hook" type. If you need intelligent/LLM-based decisions, implement them by calling an external API from within your script.
 
 ## Decision Tree
 
 ```
-Need to execute a hook?
+Need to implement a hook?
 │
-├─ Simple yes/no validation?
-│  └─ Use COMMAND (faster, cheaper)
+├─ Simple check (pattern match, file path, exit code)?
+│  └─ Use a shell one-liner in hooks.json
 │
-├─ Need natural language understanding?
-│  └─ Use PROMPT (LLM evaluation)
+├─ Moderate logic (parse JSON input, conditions)?
+│  └─ Write a Python script
 │
-├─ External tool interaction?
-│  └─ Use COMMAND (formatters, linters, git)
+├─ Complex logic (multiple checks, structured output)?
+│  └─ Write a Python or Node.js script
 │
-├─ Complex decision logic?
-│  └─ Use PROMPT (reasoning required)
-│
-└─ Logging/notification only?
-   └─ Use COMMAND (no decision needed)
+└─ System integration (OS notifications, git, formatters)?
+   └─ Use a shell script
 ```
 
 ---
 
-## Command Hooks
+## Shell one-liners
 
-### Characteristics
-
-- **Execution**: Shell command
-- **Input**: JSON via stdin
-- **Output**: JSON via stdout (optional)
-- **Speed**: Fast (no LLM call)
-- **Cost**: Free (no API usage)
-- **Complexity**: Limited to shell scripting logic
-
-### When to use
-
-✅ **Use command hooks for**:
-- File operations (read, write, check existence)
-- Running tools (prettier, eslint, git)
-- Simple pattern matching (grep, regex)
-- Logging to files
-- Desktop notifications
-- Fast validation (file size, permissions)
-
-❌ **Don't use command hooks for**:
-- Natural language analysis
-- Complex decision logic
-- Context-aware validation
-- Semantic understanding
-
-### Examples
-
-**1. Log bash commands**
-```json
-{
-  "type": "command",
-  "command": "jq -r '\"\\(.tool_input.command) - \\(.tool_input.description // \\\"No description\\\")\"' >> ~/.claude/bash-log.txt"
-}
-```
-
-**2. Block if file doesn't exist**
-```bash
-#!/bin/bash
-# check-file-exists.sh
-
-input=$(cat)
-file=$(echo "$input" | jq -r '.tool_input.file_path')
-
-if [ ! -f "$file" ]; then
-  echo '{"decision": "block", "reason": "File does not exist"}'
-  exit 0
-fi
-
-echo '{"decision": "approve", "reason": "File exists"}'
-```
-
-**3. Run prettier after edits**
-```json
-{
-  "type": "command",
-  "command": "prettier --write \"$(echo {} | jq -r '.tool_input.file_path')\"",
-  "timeout": 10000
-}
-```
-
-**4. Desktop notification**
-```json
-{
-  "type": "command",
-  "command": "osascript -e 'display notification \"Claude needs input\" with title \"Claude Code\"'"
-}
-```
-
-### Parsing input in commands
-
-Command hooks receive JSON via stdin. Use `jq` to parse:
-
-```bash
-#!/bin/bash
-input=$(cat)  # Read stdin
-
-# Extract fields
-tool_name=$(echo "$input" | jq -r '.tool_name')
-command=$(echo "$input" | jq -r '.tool_input.command')
-session_id=$(echo "$input" | jq -r '.session_id')
-
-# Your logic here
-if [[ "$command" == *"rm -rf"* ]]; then
-  echo '{"decision": "block", "reason": "Dangerous command"}'
-else
-  echo '{"decision": "approve", "reason": "Safe"}'
-fi
-```
-
----
-
-## Prompt Hooks
-
-### Characteristics
-
-- **Execution**: LLM evaluates prompt
-- **Input**: Prompt string with `$ARGUMENTS` placeholder
-- **Output**: LLM generates JSON response
-- **Speed**: Slower (~1-3s per evaluation)
-- **Cost**: Uses API credits
-- **Complexity**: Can reason, understand context, analyze semantics
-
-### When to use
-
-✅ **Use prompt hooks for**:
-- Natural language validation
-- Semantic analysis (intent, safety, appropriateness)
-- Complex decision trees
-- Context-aware checks
-- Reasoning about code quality
-- Understanding user intent
-
-❌ **Don't use prompt hooks for**:
-- Simple pattern matching (use regex/grep)
-- File operations (use command hooks)
-- High-frequency events (too slow/expensive)
-- Non-decision tasks (logging, notifications)
-
-### Examples
-
-**1. Validate commit messages**
-```json
-{
-  "type": "prompt",
-  "prompt": "Evaluate this git commit message: $ARGUMENTS\n\nCheck if it:\n1. Starts with conventional commit type (feat|fix|docs|refactor|test|chore)\n2. Is descriptive and clear\n3. Under 72 characters\n\nReturn: {\"decision\": \"approve\" or \"block\", \"reason\": \"specific feedback\"}"
-}
-```
-
-**2. Check if Stop is appropriate**
-```json
-{
-  "type": "prompt",
-  "prompt": "Review the conversation transcript: $ARGUMENTS\n\nDetermine if Claude should stop:\n1. All user tasks completed?\n2. Any errors that need fixing?\n3. Tests passing?\n4. Documentation updated?\n\nIf incomplete: {\"decision\": \"block\", \"reason\": \"what's missing\"}\nIf complete: {\"decision\": \"approve\", \"reason\": \"all done\"}"
-}
-```
-
-**3. Validate code changes for security**
-```json
-{
-  "type": "prompt",
-  "prompt": "Analyze this code change for security issues: $ARGUMENTS\n\nCheck for:\n- SQL injection vulnerabilities\n- XSS attack vectors\n- Authentication bypasses\n- Sensitive data exposure\n\nIf issues found: {\"decision\": \"block\", \"reason\": \"specific vulnerabilities\"}\nIf safe: {\"decision\": \"approve\", \"reason\": \"no issues found\"}"
-}
-```
-
-**4. Semantic prompt validation**
-```json
-{
-  "type": "prompt",
-  "prompt": "Evaluate user prompt: $ARGUMENTS\n\nIs this:\n1. Related to coding/development?\n2. Appropriate and professional?\n3. Clear and actionable?\n\nIf inappropriate: {\"decision\": \"block\", \"reason\": \"why\"}\nIf good: {\"decision\": \"approve\", \"reason\": \"ok\"}"
-}
-```
-
-### Writing effective prompts
-
-**Be specific about output format**:
-```
-Return JSON: {"decision": "approve" or "block", "reason": "explanation"}
-```
-
-**Provide clear criteria**:
-```
-Block if:
-1. Command contains 'rm -rf /'
-2. Force push to main branch
-3. Credentials in plain text
-
-Otherwise approve.
-```
-
-**Use $ARGUMENTS placeholder**:
-```
-Analyze this input: $ARGUMENTS
-
-Check for...
-```
-
-The `$ARGUMENTS` placeholder is replaced with the actual hook input JSON.
-
----
-
-## Performance Comparison
-
-| Aspect | Command Hook | Prompt Hook |
-|--------|--------------|-------------|
-| **Speed** | <100ms | 1-3s |
-| **Cost** | Free | ~$0.001-0.01 per call |
-| **Complexity** | Shell scripting | Natural language |
-| **Context awareness** | Limited | High |
-| **Reasoning** | No | Yes |
-| **Best for** | Operations, logging | Validation, analysis |
-
----
-
-## Combining Both
-
-You can use multiple hooks for the same event:
+Best for: simple logging, notifications, calling existing CLI tools.
 
 ```json
 {
   "hooks": {
-    "PreToolUse": [
+    "post_write_code": [
       {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "echo \"$input\" >> ~/bash-log.txt",
-            "comment": "Log every command (fast)"
-          },
-          {
-            "type": "prompt",
-            "prompt": "Analyze this bash command for safety: $ARGUMENTS",
-            "comment": "Validate with LLM (slower, smarter)"
-          }
-        ]
+        "command": "prettier --write \"$(cat /dev/stdin | python3 -c \"import sys,json; print(json.load(sys.stdin)['tool_info']['file_path'])\" 2>/dev/null)\""
       }
     ]
   }
 }
 ```
 
-Hooks execute in order. If any hook blocks, execution stops.
+For anything beyond trivial, prefer a script file — inline commands with JSON parsing are fragile.
 
 ---
 
-## Recommendations
+## Python scripts
 
-**High-frequency events** (PreToolUse, PostToolUse):
-- Prefer command hooks
-- Use prompt hooks sparingly
-- Cache LLM decisions when possible
+Best for: JSON parsing, conditional logic, multi-step validation. Python is available on all platforms and handles stdin/stdout cleanly.
 
-**Low-frequency events** (Stop, UserPromptSubmit):
-- Prompt hooks are fine
-- Cost/latency less critical
+**Template:**
+```python
+#!/usr/bin/env python3
+import sys, json
 
-**Balance**:
-- Command hooks for simple checks
-- Prompt hooks for complex validation
-- Combine when appropriate
+data = json.loads(sys.stdin.read())
+event = data.get("agent_action_name", "")
+tool_info = data.get("tool_info", {})
+
+# Your logic here
+# ...
+
+# Exit 0 = allow, exit 2 = block (pre-hooks only)
+sys.exit(0)
+```
+
+**Blocking example:**
+```python
+#!/usr/bin/env python3
+import sys, json
+
+data = json.loads(sys.stdin.read())
+cmd = data.get("tool_info", {}).get("command_line", "")
+
+if "rm -rf /" in cmd:
+    print("Blocked: destructive command detected", file=sys.stderr)
+    sys.exit(2)
+
+sys.exit(0)
+```
+
+**Logging example:**
+```python
+#!/usr/bin/env python3
+import sys, json
+from datetime import datetime
+
+data = json.loads(sys.stdin.read())
+with open("cascade.log", "a") as f:
+    f.write(f"{datetime.now().isoformat()} {data.get('agent_action_name')} {json.dumps(data.get('tool_info', {}))}\n")
+```
+
+---
+
+## Shell scripts
+
+Best for: OS integration (notifications, git, formatters), chaining CLI tools.
+
+**Template:**
+```bash
+#!/bin/bash
+input=$(cat)  # Read stdin JSON
+
+# Parse with python3 (more reliable than jq on all platforms)
+file_path=$(echo "$input" | python3 -c "import sys,json; print(json.load(sys.stdin).get('tool_info',{}).get('file_path',''))")
+
+# Your logic
+if [[ "$file_path" == *.py ]]; then
+    black "$file_path" 2>/dev/null || true
+fi
+
+exit 0  # exit 2 to block
+```
+
+**macOS notification:**
+```bash
+#!/bin/bash
+osascript -e 'display notification "Cascade finished" with title "Windsurf"'
+```
+
+**Linux notification:**
+```bash
+#!/bin/bash
+notify-send "Windsurf" "Cascade finished"
+```
+
+---
+
+## Node.js scripts
+
+Best for: projects already using Node, complex async operations.
+
+```javascript
+#!/usr/bin/env node
+const chunks = [];
+process.stdin.on('data', c => chunks.push(c));
+process.stdin.on('end', () => {
+  const data = JSON.parse(Buffer.concat(chunks).toString());
+  const cmd = data?.tool_info?.command_line ?? '';
+
+  if (cmd.includes('rm -rf /')) {
+    process.stderr.write('Blocked: destructive command\n');
+    process.exit(2);
+  }
+
+  process.exit(0);
+});
+```
+
+---
+
+## Comparison
+
+| Approach | Best for | Portability | JSON parsing |
+|----------|----------|-------------|--------------|
+| **Shell one-liner** | Single CLI call | macOS/Linux only | Fragile |
+| **Python script** | Logic, validation, logging | All platforms | Native |
+| **Shell script** | OS tools, notifications | macOS/Linux | Via python3 |
+| **Node.js script** | Node projects, async | All platforms | Native |
+
+---
+
+## Combining multiple hooks
+
+You can run multiple scripts for the same event — they run in order:
+
+```json
+{
+  "hooks": {
+    "pre_run_command": [
+      { "command": "python3 .windsurf/hooks/log.py", "show_output": false },
+      { "command": "python3 .windsurf/hooks/block_dangerous.py", "show_output": true }
+    ]
+  }
+}
+```
+
+All hooks run even if one exits with `2`. The action is blocked if **any** hook exits `2`.

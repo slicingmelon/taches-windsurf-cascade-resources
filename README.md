@@ -46,9 +46,11 @@ Open the cloned folder in Windsurf. Done.
 
 ---
 
-### Option 2: Global install (use in every project)
+### Option 2: Global install (use in every project) — **Recommended**
 
 Installs workflows, skills, and rules globally so they are available in **every project** on your machine. This is the Windsurf equivalent of Claude CC's `~/.claude/commands/` global install.
+
+> **This is the recommended install method.** These are general-purpose tools, not project-specific code. Installing inside individual projects adds noise and duplication — workflows and skills in `projectA/.windsurf/` won't apply when you open `projectB`.
 
 #### PowerShell (Windows)
 
@@ -78,9 +80,11 @@ cp -R ./taches-windsurf-cascade-resources/.windsurf/rules/* ~/.codeium/windsurf/
 
 Restart Windsurf after copying for discovery.
 
-### Option 3: Project-local install
+### Option 3: Project-local install (not recommended for most cases)
 
 Copy the `.windsurf` folder into a specific project root only.
+
+> **Caveat**: `.windsurf/` in one project won't apply when you open a different folder. Only use this if you want to version-control a specific subset of tools alongside a project, or if you're customising workflows per-repo.
 
 #### PowerShell (Windows)
 
@@ -262,6 +266,12 @@ Commands: invoked automatically when asked to search for torrents or find magnet
 ---
 
 More resources coming soon.
+
+---
+
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md) for the full history of changes.
 
 ---
 

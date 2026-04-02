@@ -137,7 +137,7 @@ which uv && which node && which python
 </quick_reference>
 
 <troubleshooting_quick>
-**Server not appearing:** Check `claude mcp list`, verify config in `~/.claude/settings.json`
+**Server not appearing:** Verify config in `~/.codeium/windsurf/mcp_config.json` (user) or `.windsurf/mcp_config.json` (workspace), then restart Windsurf
 
 **"command not found":** Use absolute paths from `which uv` / `which node`
 
