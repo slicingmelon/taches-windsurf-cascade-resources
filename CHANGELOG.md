@@ -12,7 +12,9 @@ Initial Windsurf-compatible release. Full port of [taches-cc-resources](https://
 
 - **39 workflows** across meta-prompting, todo management, context handoff, create/audit extensions, thinking models, research, and deep analysis categories
 - **10 skills** covering project planning, MCP server creation, agent skills, meta-prompts, slash commands, subagents, hooks, debugging, Ralph setup, and The Pirate Bay
-- **Global install instructions** (PowerShell + Bash) targeting `~/.codeium/windsurf/` paths
+- **`install.ps1`** — PowerShell installer for Windows; supports `install`, `update`, `uninstall`; invokable as a one-liner via `irm ... | iex`
+- **`install.sh`** — Bash installer for macOS/Linux; supports `install`, `update`, `uninstall`; invokable as a one-liner via `curl ... | bash`
+- Both installers target `~/.codeium/windsurf/` (global), save a manifest for clean uninstall, and pull files directly from GitHub without requiring a local clone
 - **`the-pirate-bay` skill** — search The Pirate Bay via apibay.org JSON API, extract magnet links, browse top torrents by category
 
 ### Fixed — Windsurf Compatibility

@@ -34,71 +34,64 @@ Dream big. Happy building.
 
 ## Installation
 
-### Option 1: Clone and use directly (easiest)
+> Installs to `~/.codeium/windsurf/` — globally available in every project. Restart Windsurf after install/update/uninstall.
 
-The `.windsurf/` folder ships with this repo. Clone it, open in Windsurf, and all workflows and skills are immediately available — no copying needed.
+### Windows (PowerShell) — one-liner
+
+```powershell
+irm https://raw.githubusercontent.com/slicingmelon/taches-windsurf-cascade-resources/main/install.ps1 | iex
+```
+
+**Update:**
+```powershell
+irm https://raw.githubusercontent.com/slicingmelon/taches-windsurf-cascade-resources/main/install.ps1 -OutFile install.ps1; .\install.ps1 -Action update
+```
+
+**Uninstall:**
+```powershell
+irm https://raw.githubusercontent.com/slicingmelon/taches-windsurf-cascade-resources/main/install.ps1 -OutFile install.ps1; .\install.ps1 -Action uninstall
+```
+
+---
+
+### macOS / Linux (Bash) — one-liner
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/slicingmelon/taches-windsurf-cascade-resources/main/install.sh | bash
+```
+
+**Update:**
+```bash
+curl -fsSL https://raw.githubusercontent.com/slicingmelon/taches-windsurf-cascade-resources/main/install.sh | bash -s -- update
+```
+
+**Uninstall:**
+```bash
+curl -fsSL https://raw.githubusercontent.com/slicingmelon/taches-windsurf-cascade-resources/main/install.sh | bash -s -- uninstall
+```
+
+---
+
+### What the installer does
+
+- Downloads all `.windsurf/workflows/`, `.windsurf/skills/`, and `.windsurf/rules/` files directly from GitHub
+- Places them in `~/.codeium/windsurf/global_workflows/`, `~/.codeium/windsurf/skills/`, and `~/.codeium/windsurf/global_rules/`
+- Saves a manifest at `~/.codeium/windsurf/taches-install-manifest.json` for clean uninstall/update
+- `update` overwrites all files; `uninstall` removes only files tracked in the manifest
+
+The installer scripts are [`install.ps1`](./install.ps1) and [`install.sh`](./install.sh) at the repo root.
+
+---
+
+### Option: Clone and use directly (single project)
+
+Clone and open in Windsurf — workflows and skills load from `.windsurf/` automatically for that folder only.
 
 ```bash
 git clone https://github.com/slicingmelon/taches-windsurf-cascade-resources.git
 ```
 
-Open the cloned folder in Windsurf. Done.
-
----
-
-### Option 2: Global install (use in every project) — **Recommended**
-
-Installs workflows, skills, and rules globally so they are available in **every project** on your machine. This is the Windsurf equivalent of Claude CC's `~/.claude/commands/` global install.
-
-> **This is the recommended install method.** These are general-purpose tools, not project-specific code. Installing inside individual projects adds noise and duplication — workflows and skills in `projectA/.windsurf/` won't apply when you open `projectB`.
-
-#### PowerShell (Windows)
-
-```powershell
-# Create directories if they don't exist
-New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.codeium\windsurf\global_workflows"
-New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.codeium\windsurf\skills"
-New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.codeium\windsurf\global_rules"
-
-# Install
-Copy-Item -Path ".\taches-windsurf-cascade-resources\.windsurf\workflows\*" -Destination "$env:USERPROFILE\.codeium\windsurf\global_workflows\" -Recurse -Force
-Copy-Item -Path ".\taches-windsurf-cascade-resources\.windsurf\skills\*" -Destination "$env:USERPROFILE\.codeium\windsurf\skills\" -Recurse -Force
-Copy-Item -Path ".\taches-windsurf-cascade-resources\.windsurf\rules\*" -Destination "$env:USERPROFILE\.codeium\windsurf\global_rules\" -Recurse -Force
-```
-
-#### Bash (macOS/Linux)
-
-```bash
-mkdir -p ~/.codeium/windsurf/global_workflows
-mkdir -p ~/.codeium/windsurf/skills
-mkdir -p ~/.codeium/windsurf/global_rules
-
-cp -R ./taches-windsurf-cascade-resources/.windsurf/workflows/* ~/.codeium/windsurf/global_workflows/
-cp -R ./taches-windsurf-cascade-resources/.windsurf/skills/* ~/.codeium/windsurf/skills/
-cp -R ./taches-windsurf-cascade-resources/.windsurf/rules/* ~/.codeium/windsurf/global_rules/
-```
-
-Restart Windsurf after copying for discovery.
-
-### Option 3: Project-local install (not recommended for most cases)
-
-Copy the `.windsurf` folder into a specific project root only.
-
-> **Caveat**: `.windsurf/` in one project won't apply when you open a different folder. Only use this if you want to version-control a specific subset of tools alongside a project, or if you're customising workflows per-repo.
-
-#### PowerShell (Windows)
-
-```powershell
-Copy-Item -Path ".\taches-windsurf-cascade-resources\.windsurf" -Destination "<your-project>\.windsurf" -Recurse -Force
-```
-
-#### Bash (macOS/Linux)
-
-```bash
-cp -R ./taches-windsurf-cascade-resources/.windsurf <your-project>/.windsurf
-```
-
-Restart Windsurf/Cascade after copy.
+> **Note**: `.windsurf/` in one project won't apply when you open a different folder. Use the global installer above if you want these tools available everywhere.
 
 Workflows install to `.windsurf/workflows/`. Skills install to `.windsurf/skills/`. Project-specific data (prompts, todos) lives in each project's working directory.
 
