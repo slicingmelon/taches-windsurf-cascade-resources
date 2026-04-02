@@ -8,13 +8,47 @@ This version is organized around:
 - `.windsurf/skills/` (skill content)
 - `.windsurf/rules/` (global guidance)
 
-## Manual Installation (Windsurf)
+## Installation
 
 This repo is manual-install only. No marketplace/plugin steps.
 
-### Project-local install (recommended)
+### Option 1: Global install (recommended)
 
-Copy the `.windsurf` folder from this repo into your target project root.
+Installs workflows, skills, and rules globally so they are available in **every project** on your machine — no per-project copying needed. This is the Windsurf equivalent of Claude CC's `~/.claude/commands/` install.
+
+#### PowerShell (Windows)
+
+```powershell
+# Workflows
+Copy-Item -Path ".\taches-windsurf-cascade-resources\.windsurf\workflows\*" -Destination "$env:USERPROFILE\.codeium\windsurf\global_workflows\" -Recurse -Force
+
+# Skills
+Copy-Item -Path ".\taches-windsurf-cascade-resources\.windsurf\skills\*" -Destination "$env:USERPROFILE\.codeium\windsurf\skills\" -Recurse -Force
+
+# Rules (optional)
+Copy-Item -Path ".\taches-windsurf-cascade-resources\.windsurf\rules\*" -Destination "$env:USERPROFILE\.codeium\windsurf\global_rules\" -Recurse -Force
+```
+
+#### Bash (macOS/Linux)
+
+```bash
+# Workflows
+cp -R ./taches-windsurf-cascade-resources/.windsurf/workflows/* ~/.codeium/windsurf/global_workflows/
+
+# Skills
+cp -R ./taches-windsurf-cascade-resources/.windsurf/skills/* ~/.codeium/windsurf/skills/
+
+# Rules (optional)
+cp -R ./taches-windsurf-cascade-resources/.windsurf/rules/* ~/.codeium/windsurf/global_rules/
+```
+
+Restart Windsurf after copying for discovery.
+
+---
+
+### Option 2: Project-local install
+
+Copy the `.windsurf` folder into a specific project root only.
 
 #### PowerShell (Windows)
 
@@ -28,7 +62,7 @@ Copy-Item -Path ".\taches-windsurf-cascade-resources\.windsurf" -Destination "<y
 cp -R ./taches-windsurf-cascade-resources/.windsurf <your-project>/.windsurf
 ```
 
-After copy, restart Windsurf/Cascade for discovery.
+Restart Windsurf/Cascade after copy.
 
 ## Structure
 
@@ -49,8 +83,3 @@ taches-windsurf-cascade-resources/
 - Skills were mirrored into `.windsurf/skills/`.
 - A base rules file was added at `.windsurf/rules/core.md`.
 
-## Important note
-
-These are skeleton conversions to make the resource pack Windsurf-discoverable quickly.
-
-Some workflow bodies still contain Claude-specific phrasing (for example, references to subagents or legacy command arguments). Treat them as migration scaffolds and refine per workflow as needed.
