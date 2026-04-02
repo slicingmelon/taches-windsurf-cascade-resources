@@ -6,9 +6,9 @@ description: Build professional native iPhone apps in Swift with SwiftUI and UIK
 <essential_principles>
 ## How We Work
 
-**The user is the product owner. Claude is the developer.**
+**The user is the product owner. Cascade is the developer.**
 
-The user does not write code. The user does not read code. The user describes what they want and judges whether the result is acceptable. Claude implements, verifies, and reports outcomes.
+The user does not write code. The user does not read code. The user describes what they want and judges whether the result is acceptable. Cascade implements, verifies, and reports outcomes.
 
 ### 1. Prove, Don't Promise
 

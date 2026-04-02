@@ -39,7 +39,7 @@ WHY IT WORKS:
 
 2. File I/O as state
    - IMPLEMENTATION_PLAN.md is the only persistent state
-   - Claude reads it, updates it, commits it
+   - Cascade reads it, updates it, commits it
    - No sophisticated orchestration needed
 
 3. Backpressure as steering
@@ -189,7 +189,7 @@ WHEN TO ADD:
 
 WHEN NOT TO ADD:
 - One-off mistakes (wait for pattern)
-- General best practices (Claude knows these)
+- General best practices (Cascade knows these)
 - Things already in specs (don't duplicate)
 - Temporary workarounds (fix root cause)
 

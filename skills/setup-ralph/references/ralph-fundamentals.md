@@ -11,7 +11,7 @@ Ralph is an autonomous AI coding methodology created by Geoffrey Huntley that we
 while :; do cat PROMPT.md | claude ; done
 ```
 
-The loop continuously feeds a prompt file to Claude Code CLI. The agent completes one task, updates the implementation plan on disk, commits changes, then exits. The loop restarts immediately with fresh context.
+The loop continuously feeds a prompt file to the Cascade CLI. The agent completes one task, updates the implementation plan on disk, commits changes, then exits. The loop restarts immediately with fresh context.
 
 **The core insight:** Ralph solves context accumulation by starting each iteration with fresh context. This is "deterministically bad in an undeterministic world"—embracing the chaos rather than fighting it.
 </what_is_ralph>
@@ -28,7 +28,7 @@ Ralph isn't just "a loop that codes." It's a funnel with specific structure:
 **Output:** `IMPLEMENTATION_PLAN.md` (prioritized TODO list)
 **Rule:** No implementation, no commits
 
-The planning prompt instructs Claude to:
+The planning prompt instructs Cascade to:
 1. Study all specification files
 2. Study existing source code
 3. Compare specs against implementation
@@ -44,7 +44,7 @@ The planning prompt instructs Claude to:
 **Output:** Code changes + commits
 **Rule:** One task per loop iteration
 
-The building prompt instructs Claude to:
+The building prompt instructs Cascade to:
 1. Study the implementation plan
 2. Select most important task
 3. Search existing code (don't assume anything is missing)
@@ -83,7 +83,7 @@ Each loop starts with a clean 200K context window. No accumulated conversation h
 
 ### 2. File I/O as State
 
-The `IMPLEMENTATION_PLAN.md` file is the only state that persists across iterations. This serves as deterministic shared state—no sophisticated orchestration needed. Claude reads it, updates it, commits it.
+The `IMPLEMENTATION_PLAN.md` file is the only state that persists across iterations. This serves as deterministic shared state—no sophisticated orchestration needed. Cascade reads it, updates it, commits it.
 
 ### 3. Backpressure as Steering
 
@@ -97,7 +97,7 @@ Tests, type checks, lints, and builds provide downstream steering. If Ralph's co
 
 ### 4. Context Efficiency
 
-200K advertised tokens ≈ 176K usable tokens. The "smart zone" (where Claude reasons best) is 40-60% of the window.
+200K advertised tokens ≈ 176K usable tokens. The "smart zone" (where Cascade reasons best) is 40-60% of the window.
 
 **Optimization:**
 - Tight tasks + one task per loop = 100% smart zone utilization

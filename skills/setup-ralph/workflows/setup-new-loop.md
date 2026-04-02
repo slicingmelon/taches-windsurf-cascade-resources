@@ -101,7 +101,7 @@ mkdir -p specs src
 ## Step 6: Generate Loop Script
 
 Use `templates/loop.sh` and customize:
-- Set Claude model (default: `opus` for reasoning, can use `sonnet` for speed)
+- Set Cascade model (default: `opus` for reasoning, can use `sonnet` for speed)
 - Configure CLI flags based on user preferences
 - Add validation commands based on backpressure choice
 

@@ -4,9 +4,9 @@
 
 set -e  # Exit on error
 
-# Verify Claude CLI is installed
+# Verify Cascade CLI is installed
 if ! command -v claude &>/dev/null; then
-  echo "Error: Claude CLI not found"
+  echo "Error: Cascade CLI not found"
   echo "Install with: npm install -g @anthropic-ai/claude-code"
   exit 1
 fi
@@ -500,7 +500,7 @@ if [ ! -f "$PROMPT_FILE" ]; then
   exit 1
 fi
 
-# Build Claude CLI command as array (security: avoids eval injection)
+# Build Cascade CLI command as array (security: avoids eval injection)
 CLAUDE_ARGS=("--model" "$MODEL" "-p" "--dangerously-skip-permissions" "--output-format" "text")
 
 if [ "$VERBOSE" = "true" ]; then
@@ -509,7 +509,7 @@ fi
 
 # Display configuration
 echo "Model: $MODEL"
-echo "Claude args: ${CLAUDE_ARGS[*]}"
+echo "Cascade args: ${CLAUDE_ARGS[*]}"
 echo "Prompt: $PROMPT_FILE"
 if [ -n "$LIMIT" ]; then
   echo "Limit: $LIMIT iterations"
@@ -570,7 +570,7 @@ while true; do
     exit 0
   fi
 
-  # Run Claude with prompt (tee to log file for observability)
+  # Run Cascade with prompt (tee to log file for observability)
   # Watch progress: tail -f ralph.log
   if cat "$PROMPT_FILE" | claude "${CLAUDE_ARGS[@]}" 2>&1 | tee -a "$LOG_FILE"; then
     # Print iteration summary in build mode
@@ -584,7 +584,7 @@ while true; do
   else
     EXIT_CODE=$?
     echo ""
-    echo "❌ Claude exited with code $EXIT_CODE"
+    echo "❌ Cascade exited with code $EXIT_CODE"
     cleanup "error" "$EXIT_CODE"
     exit $EXIT_CODE
   fi

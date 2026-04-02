@@ -1,6 +1,6 @@
 #!/bin/bash
 # Ralph Docker Loop
-# Runs Claude in isolated container, backup/git runs on HOST
+# Runs Cascade in isolated container, backup/git runs on HOST
 
 set -e
 
@@ -230,7 +230,7 @@ while true; do
     # Push to backup ON HOST (has gh auth)
     push_to_backup
   else
-    echo "Claude exited with error"
+    echo "Cascade exited with error"
     push_to_backup
     exit 1
   fi

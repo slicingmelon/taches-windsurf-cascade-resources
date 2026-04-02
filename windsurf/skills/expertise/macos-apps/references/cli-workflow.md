@@ -27,7 +27,7 @@ brew install xcbeautify
 mkdir MyApp && cd MyApp
 mkdir -p Sources Tests Resources
 
-# Create project.yml (Claude generates this)
+# Create project.yml (Cascade generates this)
 cat > project.yml << 'EOF'
 name: MyApp
 options:
@@ -533,7 +533,7 @@ Typical development cycle without opening Xcode:
 
 ```bash
 # 1. Edit code (in your editor of choice)
-# Claude Code, vim, VS Code, etc.
+# Cascade, vim, VS Code, etc.
 
 # 2. Build
 xcodebuild -project MyApp.xcodeproj -scheme MyApp -configuration Debug -derivedDataPath ./build build 2>&1 | grep -E "error:|warning:" || echo "Build succeeded"

@@ -137,7 +137,7 @@ ls -la PROMPT_plan.md PROMPT_build.md
 ```
 If missing, run setup again or create from templates.
 
-**Check Claude CLI:**
+**Check Cascade CLI:**
 ```bash
 claude --version
 ```
@@ -243,12 +243,12 @@ After fixing the issue:
 
 1. **Add to AGENTS.md** if relevant pattern discovered
 2. **Update specs** if requirements were unclear
-3. **Update prompts** if Claude needed different instructions
+3. **Update prompts** if Cascade needed different instructions
 4. **Consider Docker mode** if safety is a concern
 
 Ask: "Would you like to:"
 1. **Add a learning to AGENTS.md** - Document what went wrong
-2. **Update prompts** - Change Claude's instructions
+2. **Update prompts** - Change Cascade's instructions
 3. **Resume the loop** - Continue with the fix applied
 4. **Return to main menu** - Done troubleshooting
 </process>

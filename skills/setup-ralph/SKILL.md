@@ -12,7 +12,7 @@ Ralph is Geoffrey Huntley's autonomous AI coding methodology that uses iterative
 while :; do cat PROMPT.md | claude ; done
 ```
 
-The loop feeds a prompt file to Claude, the agent completes one task, updates the implementation plan, commits changes, then exits. The loop restarts immediately with fresh context.
+The loop feeds a prompt file to Cascade, the agent completes one task, updates the implementation plan, commits changes, then exits. The loop restarts immediately with fresh context.
 
 ### Core Philosophy
 

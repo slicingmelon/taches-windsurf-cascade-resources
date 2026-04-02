@@ -46,13 +46,13 @@ Mixing objectives (plan AND build) creates confusion.
 
 ### 4. Leverage Parallel Subagents
 
-Claude Code can spawn hundreds of subagents for reading/searching. Use this:
+Cascade can spawn hundreds of subagents for reading/searching. Use this:
 
 ```markdown
 Study specs/* (up to 500 parallel Sonnet subagents)
 ```
 
-This tells Claude it's safe and encouraged to use massive parallelism.
+This tells Cascade it's safe and encouraged to use massive parallelism.
 
 ### 5. Context Budget Allocation
 
@@ -243,7 +243,7 @@ Run:
 
 ### Why Specify Counts?
 
-Claude Code is conservative about spawning subagents unless explicitly permitted. Specifying counts signals:
+Cascade is conservative about spawning subagents unless explicitly permitted. Specifying counts signals:
 - It's safe to parallelize
 - High counts are acceptable
 - Performance is valued
@@ -377,7 +377,7 @@ Read spec-1.md, then spec-2.md, then spec-3.md...
 Study specs/* (use up to 500 parallel Sonnet subagents)
 ```
 
-Claude can read hundreds of files simultaneously. Let it.
+Cascade can read hundreds of files simultaneously. Let it.
 
 ### Mistake 4: No Clear Exit
 
@@ -424,7 +424,7 @@ Use `@filename` to ensure files are loaded into context:
 0b. Study @IMPLEMENTATION_PLAN.md
 ```
 
-This tells Claude Code to inline the file content, guaranteeing it's in context.
+This tells Cascade to inline the file content, guaranteeing it's in context.
 
 **When to use:**
 - Critical files that must be loaded (plan, specs)

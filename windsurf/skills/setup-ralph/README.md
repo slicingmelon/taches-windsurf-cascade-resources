@@ -1,10 +1,10 @@
 # setup-ralph
 
-A Claude Code skill that sets up [Ralph Wiggum loops](https://ghuntley.com/ralph/) - Geoffrey Huntley's autonomous AI coding technique.
+A Windsurf Cascade skill that sets up [Ralph Wiggum loops](https://ghuntley.com/ralph/) - Geoffrey Huntley's autonomous AI coding technique.
 
 ## What is Ralph?
 
-Ralph is an autonomous coding methodology where Claude runs in a loop:
+Ralph is an autonomous coding methodology where Cascade runs in a loop:
 
 ```bash
 while :; do cat PROMPT.md | claude -p --dangerously-skip-permissions; done
@@ -32,7 +32,7 @@ The key insight: **fresh context every iteration** prevents hallucination accumu
 
 ## Usage
 
-In Claude Code, run:
+In Windsurf, run:
 
 ```
 /setup-ralph
@@ -122,10 +122,10 @@ The loop scripts automatically load this token.
 
 ## Docker Mode
 
-Docker mode runs Claude in an isolated container:
+Docker mode runs Cascade CLI in an isolated container:
 - ✅ Can only access the project directory
 - ✅ Can't modify system files
-- ✅ Uses your Claude Max subscription via OAuth token
+- ✅ Uses your Cascade-compatible subscription via OAuth token
 - ✅ Non-root user (required for `--dangerously-skip-permissions`)
 
 First time setup:
