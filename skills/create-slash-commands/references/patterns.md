@@ -106,7 +106,7 @@ This helps improve application performance through targeted improvements.
 
 **Usage**: `/optimize`
 
-Claude analyzes code in the current conversation context.
+Cascade analyzes code in the current conversation context.
 
 ### Pattern: Security Review
 
@@ -373,7 +373,7 @@ This helps discover optimal solutions by stripping away assumptions and rebuildi
 </success_criteria>
 ```
 
-Tool restriction ensures Claude only uses SequentialThinking.
+Tool restriction ensures Cascade only uses SequentialThinking.
 
 ### Pattern: Strategic Planning
 

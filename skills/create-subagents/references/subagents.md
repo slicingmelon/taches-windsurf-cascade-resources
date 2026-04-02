@@ -28,7 +28,7 @@ Step-by-step process for consistency.
 | Field | Required | Description |
 |-------|----------|-------------|
 | `name` | Yes | Unique identifier using lowercase letters and hyphens |
-| `description` | Yes | Natural language description of purpose. Include when Claude should invoke this. |
+| `description` | Yes | Natural language description of purpose. Include when Cascade should invoke this. |
 | `tools` | No | Comma-separated list. If omitted, inherits all tools from main thread |
 | `model` | No | `sonnet`, `opus`, `haiku`, or `inherit`. If omitted, uses default subagent model |
 </configuration_fields>
@@ -185,7 +185,7 @@ Use `/agents` command to see full list of available tools.
 
 <invocation>
 <automatic>
-Claude automatically selects subagents based on:
+Cascade automatically selects subagents based on:
 - Task description in user's request
 - `description` field in subagent configuration
 - Current context

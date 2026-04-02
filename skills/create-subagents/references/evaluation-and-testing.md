@@ -81,7 +81,7 @@ Evaluate the security review output on a 1-5 scale:
 Think step-by-step about which vulnerabilities were checked and which were missed.
 ```
 
-**Implementation**: Pass subagent output and criteria to Claude, get structured evaluation.
+**Implementation**: Pass subagent output and criteria to Cascade, get structured evaluation.
 </example>
 
 **When to use**: Complex quality metrics that can't be measured programmatically (thoroughness, insight quality, appropriateness of recommendations).
