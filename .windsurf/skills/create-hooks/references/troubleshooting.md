@@ -1,270 +1,115 @@
 # Troubleshooting
 
-Common issues and solutions when working with hooks.
+Common issues and solutions when working with Windsurf Cascade hooks.
+
+---
 
 ## Hook Not Triggering
 
 ### Symptom
-Hook never executes, even when expected event occurs.
+Hook never executes even when the expected event occurs.
 
-### Diagnostic steps
+### Steps
 
-**1. Enable debug mode**
-```bash
-claude --debug
-```
+**1. Check hook file location**
 
-Look for:
-```
-[DEBUG] Getting matching hook commands for PreToolUse with query: Bash
-[DEBUG] Found 0 hooks
-```
-
-**2. Check hook file location**
-
-Hooks must be in:
-- Project: `.claude/hooks.json`
-- User: `~/.claude/hooks.json`
-- Plugin: `{plugin}/hooks.json`
+Hooks must be in one of:
+- Workspace: `.windsurf/hooks.json`
+- User: `~/.codeium/windsurf/hooks.json`
 
 Verify:
+```powershell
+# Windows
+Get-Content .windsurf/hooks.json
+```
 ```bash
-cat .claude/hooks.json
-# or
-cat ~/.claude/hooks.json
+# macOS/Linux
+cat .windsurf/hooks.json
 ```
 
-**3. Validate JSON syntax**
+**2. Validate JSON syntax**
 
-Invalid JSON is silently ignored:
+Invalid JSON is silently ignored — hooks won't fire:
+
+```powershell
+# Windows
+Get-Content .windsurf/hooks.json | ConvertFrom-Json
+```
 ```bash
-jq . .claude/hooks.json
+# macOS/Linux
+python3 -m json.tool .windsurf/hooks.json
 ```
 
-If error: fix JSON syntax.
+**3. Verify the event name is correct**
 
-**4. Check matcher pattern**
+Event names are lowercase with underscores. Common mistakes:
 
-Common mistakes:
-
-❌ Case sensitivity
+❌ Wrong (Claude Code style)
 ```json
-{
-  "matcher": "bash"  // Won't match "Bash"
-}
+{ "PreToolUse": [...] }
 ```
 
-✅ Fix
+✅ Correct (Windsurf style)
 ```json
-{
-  "matcher": "Bash"
-}
+{ "pre_run_command": [...] }
 ```
+
+Full list: `pre_read_code`, `post_read_code`, `pre_write_code`, `post_write_code`, `pre_run_command`, `post_run_command`, `pre_mcp_tool_use`, `post_mcp_tool_use`, `pre_user_prompt`, `post_cascade_response`, `post_cascade_response_with_transcript`, `post_setup_worktree`
+
+**4. Trigger the right Cascade action**
+
+Hooks only fire when Cascade performs the corresponding action. `pre_run_command` only fires when Cascade runs a terminal command — not when you run commands yourself in the terminal.
 
 ---
 
-❌ Missing escape for regex
-```json
-{
-  "matcher": "mcp__memory__*"  // Literal *, not wildcard
-}
-```
-
-✅ Fix
-```json
-{
-  "matcher": "mcp__memory__.*"  // Regex wildcard
-}
-```
-
-**5. Test matcher in isolation**
-
-```bash
-node -e "console.log(/Bash/.test('Bash'))"  # true
-node -e "console.log(/bash/.test('Bash'))"  # false
-```
-
-### Solutions
-
-**Missing hook file**: Create `.claude/hooks.json` or `~/.claude/hooks.json`
-
-**Invalid JSON**: Use `jq` to validate and format:
-```bash
-jq . .claude/hooks.json > temp.json && mv temp.json .claude/hooks.json
-```
-
-**Wrong matcher**: Check tool names with `--debug` and update matcher
-
-**No matcher specified**: If you want to match all tools, omit the matcher field entirely:
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "hooks": [...]  // No matcher = all tools
-      }
-    ]
-  }
-}
-```
-
----
-
-## Command Hook Failing
+## Script Not Executing
 
 ### Symptom
-Hook executes but fails with error.
+Hook is configured but script errors or doesn't run.
 
-### Diagnostic steps
+### Steps
 
-**1. Check debug output**
-```
-[DEBUG] Hook command completed with status 1: <error message>
-```
+**1. Test the script manually with sample input**
 
-Status 1 = command failed.
-
-**2. Test command directly**
-
-Copy the command and run in terminal:
 ```bash
-echo '{"session_id":"test","tool_name":"Bash"}' | /path/to/your/hook.sh
+echo '{"agent_action_name":"pre_run_command","trajectory_id":"test","execution_id":"test","timestamp":"2025-01-01T00:00:00Z","tool_info":{"command_line":"echo hello","cwd":"/tmp"}}' | python3 .windsurf/hooks/your_script.py
 ```
 
-**3. Check permissions**
+**2. Check executable permissions (macOS/Linux)**
+
 ```bash
-ls -l /path/to/hook.sh
-chmod +x /path/to/hook.sh  # If not executable
+chmod +x .windsurf/hooks/your_script.py
+# or for shell scripts:
+chmod +x .windsurf/hooks/your_script.sh
 ```
 
-**4. Verify dependencies**
+**3. Check shebang line**
 
-Does the command require tools?
+Script files must have a correct shebang:
+```python
+#!/usr/bin/env python3
+```
 ```bash
-which jq  # Check if jq is installed
-which osascript  # macOS only
+#!/bin/bash
 ```
 
-### Common issues
+**4. Verify the command path**
 
-**Missing executable permission**
-```bash
-chmod +x /path/to/hook.sh
-```
+Use paths relative to workspace root or absolute paths. `~` is **not** expanded:
 
-**Missing dependencies**
-
-Install required tools:
-```bash
-# macOS
-brew install jq
-
-# Linux
-apt-get install jq
-```
-
-**Bad path**
-
-Use absolute paths:
+❌ Won't work
 ```json
-{
-  "command": "/Users/username/.claude/hooks/script.sh"
-}
+{ "command": "~/hooks/script.py" }
 ```
 
-Or use environment variables:
+✅ Correct
 ```json
-{
-  "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/script.sh"
-}
+{ "command": "/Users/yourname/hooks/script.py" }
 ```
 
-**Timeout**
-
-If command takes too long:
+✅ Also correct (relative to workspace root)
 ```json
-{
-  "command": "/path/to/slow-script.sh",
-  "timeout": 120000  // 2 minutes
-}
-```
-
----
-
-## Prompt Hook Not Working
-
-### Symptom
-Prompt hook blocks everything or doesn't block when expected.
-
-### Diagnostic steps
-
-**1. Check LLM response format**
-
-Debug output shows:
-```
-[DEBUG] Hook command completed with status 0: {"decision": "approve", "reason": "ok"}
-```
-
-Verify JSON is valid.
-
-**2. Check prompt structure**
-
-Ensure prompt is clear:
-```json
-{
-  "prompt": "Evaluate: $ARGUMENTS\n\nReturn JSON: {\"decision\": \"approve\" or \"block\", \"reason\": \"why\"}"
-}
-```
-
-**3. Test prompt manually**
-
-Submit similar prompt to Claude directly to see response format.
-
-### Common issues
-
-**Ambiguous instructions**
-
-❌ Vague
-```json
-{
-  "prompt": "Is this ok? $ARGUMENTS"
-}
-```
-
-✅ Clear
-```json
-{
-  "prompt": "Check if this command is safe: $ARGUMENTS\n\nBlock if: contains 'rm -rf', 'mkfs', or force push to main\n\nReturn: {\"decision\": \"approve\" or \"block\", \"reason\": \"explanation\"}"
-}
-```
-
-**Missing $ARGUMENTS**
-
-❌ No placeholder
-```json
-{
-  "prompt": "Validate this command"
-}
-```
-
-✅ With placeholder
-```json
-{
-  "prompt": "Validate this command: $ARGUMENTS"
-}
-```
-
-**Invalid JSON response**
-
-The LLM must return valid JSON. If it returns plain text, the hook fails.
-
-Add explicit formatting instructions:
-```
-IMPORTANT: Return ONLY valid JSON, no other text:
-{
-  "decision": "approve" or "block",
-  "reason": "your explanation"
-}
+{ "command": "python3 .windsurf/hooks/script.py" }
 ```
 
 ---
@@ -272,103 +117,41 @@ IMPORTANT: Return ONLY valid JSON, no other text:
 ## Hook Blocks Everything
 
 ### Symptom
-Hook blocks all operations, even safe ones.
+Pre-hook blocks all actions, even safe ones.
 
-### Diagnostic steps
-
-**1. Check hook logic**
-
-Review the script/prompt logic. Is the condition too broad?
-
-**2. Test with known-safe input**
-
-```bash
-echo '{"tool_name":"Read","tool_input":{"file_path":"test.txt"}}' | /path/to/hook.sh
-```
-
-Expected: `{"decision": "approve"}`
-
-**3. Check for errors in script**
-
-Add error output:
-```bash
-#!/bin/bash
-set -e  # Exit on error
-input=$(cat)
-# ... rest of script
-```
+### Cause
+Logic error — script exits with code `2` unconditionally, or has an unhandled exception that causes unexpected exit.
 
 ### Solutions
 
-**Logic error**
+**Add a default allow at the end:**
+```python
+import sys, json
 
-Review conditions:
-```bash
-# Before (blocks everything)
-if [[ "$command" != "safe_command" ]]; then
-  block
-fi
+data = json.loads(sys.stdin.read())
+cmd = data.get("tool_info", {}).get("command_line", "")
 
-# After (blocks dangerous commands)
-if [[ "$command" == *"dangerous"* ]]; then
-  block
-fi
+if "rm -rf /" in cmd:
+    print("Blocked: dangerous command", file=sys.stderr)
+    sys.exit(2)
+
+sys.exit(0)  # ← Always allow unless explicitly blocked
 ```
 
-**Default to approve**
+**Wrap in try/except to prevent crashes blocking actions:**
+```python
+import sys, json
 
-If logic is complex, default to approve on unclear cases:
-```bash
-# Default
-decision="approve"
-reason="ok"
+try:
+    data = json.loads(sys.stdin.read())
+    cmd = data.get("tool_info", {}).get("command_line", "")
+    if "rm -rf /" in cmd:
+        print("Blocked", file=sys.stderr)
+        sys.exit(2)
+except Exception:
+    pass  # On error, allow action to proceed
 
-# Only change if dangerous
-if [[ "$command" == *"rm -rf"* ]]; then
-  decision="block"
-  reason="Dangerous command"
-fi
-
-echo "{\"decision\": \"$decision\", \"reason\": \"$reason\"}"
-```
-
----
-
-## Infinite Loop in Stop Hook
-
-### Symptom
-Stop hook runs repeatedly, Claude never stops.
-
-### Cause
-Hook blocks stop without checking `stop_hook_active` flag.
-
-### Solution
-
-**Always check the flag**:
-```bash
-#!/bin/bash
-input=$(cat)
-stop_hook_active=$(echo "$input" | jq -r '.stop_hook_active')
-
-# If hook already active, don't block again
-if [[ "$stop_hook_active" == "true" ]]; then
-  echo '{"decision": undefined}'
-  exit 0
-fi
-
-# Your logic here
-if [ tests_passing ]; then
-  echo '{"decision": "approve", "reason": "Tests pass"}'
-else
-  echo '{"decision": "block", "reason": "Tests failing"}'
-fi
-```
-
-Or in prompt hooks:
-```json
-{
-  "prompt": "Evaluate stopping: $ARGUMENTS\n\nIMPORTANT: If stop_hook_active is true, return {\"decision\": undefined}\n\nOtherwise check if tasks complete..."
-}
+sys.exit(0)
 ```
 
 ---
@@ -376,212 +159,111 @@ Or in prompt hooks:
 ## Hook Output Not Visible
 
 ### Symptom
-Hook runs but output not shown to user.
-
-### Cause
-`suppressOutput: true` or output goes to stderr.
+Hook runs but nothing appears in the Cascade UI.
 
 ### Solutions
 
-**Don't suppress output**:
+**Set `show_output: true` in config:**
 ```json
 {
-  "decision": "approve",
-  "reason": "ok",
-  "suppressOutput": false
+  "hooks": {
+    "pre_run_command": [
+      {
+        "command": "python3 .windsurf/hooks/check.py",
+        "show_output": true
+      }
+    ]
+  }
 }
 ```
 
-**Use systemMessage**:
-```json
-{
-  "decision": "approve",
-  "reason": "ok",
-  "systemMessage": "This message will be shown to user"
-}
+**Write to stdout (not only stderr) for informational messages:**
+```python
+print("Hook ran successfully")        # visible if show_output: true
+print("Blocked: reason", file=sys.stderr)  # shown when blocking
 ```
 
-**Write to stdout, not stderr**:
-```bash
-echo "This is shown" >&1
-echo "This is hidden" >&2
+**Note**: `show_output` does not apply to `pre_user_prompt` or `post_cascade_response`.
+
+---
+
+## Pre-hook Not Blocking
+
+### Symptom
+Pre-hook runs but action is not blocked.
+
+### Cause
+Script exits with a non-2 code, or only `post_` hooks are used (post-hooks cannot block).
+
+### Solutions
+
+**Use exit code `2` to block (not `1` or any other code):**
+```python
+sys.exit(2)  # ← This blocks
+sys.exit(1)  # ← This does NOT block (action proceeds)
 ```
+
+**Verify you are using a `pre_` event, not `post_`:**
+
+Only these events can block:
+- `pre_read_code`
+- `pre_write_code`
+- `pre_run_command`
+- `pre_mcp_tool_use`
+- `pre_user_prompt`
 
 ---
 
 ## Permission Errors
 
 ### Symptom
-Hook script can't read files or execute commands.
+Script can't read files or execute commands.
 
 ### Solutions
 
-**Make script executable**:
+**Make scripts executable (macOS/Linux):**
 ```bash
-chmod +x /path/to/hook.sh
+chmod +x .windsurf/hooks/*.py
+chmod +x .windsurf/hooks/*.sh
 ```
 
-**Check file ownership**:
-```bash
-ls -l /path/to/hook.sh
-chown $USER /path/to/hook.sh
-```
-
-**Use absolute paths**:
-```bash
-# Instead of
-command="./script.sh"
-
-# Use
-command="$CLAUDE_PROJECT_DIR/.claude/hooks/script.sh"
-```
-
----
-
-## Hook Timeouts
-
-### Symptom
-```
-[DEBUG] Hook command timed out after 60000ms
-```
-
-### Solutions
-
-**Increase timeout**:
-```json
-{
-  "type": "command",
-  "command": "/path/to/slow-script.sh",
-  "timeout": 300000  // 5 minutes
-}
-```
-
-**Optimize script**:
-- Reduce unnecessary operations
-- Cache results when possible
-- Run expensive operations in background
-
-**Run in background**:
-```bash
-#!/bin/bash
-# Start long operation in background
-/path/to/long-operation.sh &
-
-# Return immediately
-echo '{"decision": "approve", "reason": "ok"}'
-```
-
----
-
-## Matcher Conflicts
-
-### Symptom
-Multiple hooks triggering when only one expected.
-
-### Cause
-Tool name matches multiple matchers.
-
-### Diagnostic
-```
-[DEBUG] Matched 3 hooks for query "Bash"
-```
-
-### Solutions
-
-**Be more specific**:
-```json
-// Instead of
-{"matcher": ".*"}  // Matches everything
-
-// Use
-{"matcher": "Bash"}  // Exact match
-```
-
-**Check overlapping patterns**:
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {"matcher": "Bash", ...},        // Matches Bash
-      {"matcher": "Bash.*", ...},      // Also matches Bash!
-      {"matcher": ".*", ...}           // Also matches everything!
-    ]
-  }
-}
-```
-
-Remove overlaps or make them mutually exclusive.
-
----
-
-## Environment Variables Not Working
-
-### Symptom
-`$CLAUDE_PROJECT_DIR` or other variables are empty.
-
-### Solutions
-
-**Check variable spelling**:
-- `$CLAUDE_PROJECT_DIR` (correct)
-- `$CLAUDE_PROJECT_ROOT` (wrong)
-
-**Use double quotes**:
-```json
-{
-  "command": "$CLAUDE_PROJECT_DIR/hooks/script.sh"
-}
-```
-
-**In shell scripts, use from input**:
-```bash
-#!/bin/bash
-input=$(cat)
-cwd=$(echo "$input" | jq -r '.cwd')
-cd "$cwd" || exit 1
+**Use absolute paths for files outside workspace:**
+```python
+import os
+# Read a file outside the project
+with open("/absolute/path/to/config.txt") as f:
+    config = f.read()
 ```
 
 ---
 
 ## Debugging Workflow
 
-**Step 1**: Enable debug mode
+**Step 1**: Set `"show_output": true` on the hook during development
+
+**Step 2**: Test the script directly in terminal with sample input
 ```bash
-claude --debug
+echo '{"agent_action_name":"pre_run_command","trajectory_id":"t","execution_id":"e","timestamp":"2025-01-01T00:00:00Z","tool_info":{"command_line":"npm install","cwd":"/tmp"}}' | python3 .windsurf/hooks/your_script.py
+echo "Exit code: $?"
 ```
 
-**Step 2**: Look for hook execution logs
-```
-[DEBUG] Executing hooks for PreToolUse:Bash
-[DEBUG] Found 1 hook matchers
-[DEBUG] Executing hook command: /path/to/script.sh
-[DEBUG] Hook command completed with status 0
+**Step 3**: Add debug logging to your script
+```python
+import sys, json
+
+data = json.loads(sys.stdin.read())
+
+# Write debug info to a log file
+with open("/tmp/hook-debug.log", "a") as f:
+    f.write(f"Event: {data.get('agent_action_name')}\n")
+    f.write(f"tool_info: {data.get('tool_info')}\n")
+
+sys.exit(0)
 ```
 
-**Step 3**: Test hook in isolation
+**Step 4**: Validate your JSON config
 ```bash
-echo '{"test":"data"}' | /path/to/hook.sh
+python3 -m json.tool .windsurf/hooks.json
 ```
 
-**Step 4**: Check script with `set -x`
-```bash
-#!/bin/bash
-set -x  # Print each command before executing
-# ... your script
-```
-
-**Step 5**: Add logging
-```bash
-#!/bin/bash
-echo "Hook started" >> /tmp/hook-debug.log
-input=$(cat)
-echo "Input: $input" >> /tmp/hook-debug.log
-# ... your logic
-echo "Decision: $decision" >> /tmp/hook-debug.log
-```
-
-**Step 6**: Verify JSON output
-```bash
-echo '{"decision":"approve","reason":"test"}' | jq .
-```
-
-If `jq` fails, JSON is invalid.
+**Step 5**: Check that hooks are merged correctly — system hooks, user hooks, and workspace hooks are all active simultaneously. If a system-level hook is blocking, it will block even if your workspace hook allows.

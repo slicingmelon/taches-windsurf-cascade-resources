@@ -21,7 +21,7 @@ Dream big. Happy building.
 - **Research**: Deep dives, competitive analysis, feasibility, landscape mapping
 - **Deep Analysis**: Systematic debugging methodology with evidence and hypothesis testing
 
-**[Skills](#skills)** (9 total) - Autonomous workflows that research, generate, and self-heal
+**[Skills](#skills)** (10 total) - Autonomous workflows that research, generate, and self-heal
 - **Create Plans**: Hierarchical project planning for solo developer + Cascade workflows
 - **Create MCP Servers**: Build MCP servers for Windsurf integrations (Python/TypeScript)
 - **Create Agent Skills**: Build new skills by describing what you want
@@ -240,6 +240,12 @@ Set up Geoffrey Huntley's Ralph Wiggum autonomous coding loop. Ralph is an auton
 **Three phases:** Planning (gap analysis → TODO list), Building (implement one task, validate, commit), Observation (you engineer the environment).
 
 Commands: `/setup-ralph`
+
+### [The Pirate Bay](./.windsurf/skills/the-pirate-bay/)
+
+Search The Pirate Bay for torrents and extract magnet links via the apibay.org JSON API. Supports searching by keyword, browsing top torrents by category, and filtering by seeders.
+
+Commands: invoked automatically when asked to search for torrents or find magnet links
 
 ---
 

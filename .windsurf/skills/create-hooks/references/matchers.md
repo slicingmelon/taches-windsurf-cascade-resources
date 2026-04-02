@@ -1,470 +1,138 @@
-# Matchers and Pattern Matching
+# Hook Configuration Reference
 
-Complete guide to matching tools with hook matchers.
+Complete guide to configuring Windsurf Cascade hooks.
 
-## What are matchers?
-
-Matchers are regex patterns that filter which tools trigger a hook. They allow you to:
-- Target specific tools (e.g., only `Bash`)
-- Match multiple tools (e.g., `Write|Edit`)
-- Match tool categories (e.g., all MCP tools)
-- Match everything (omit matcher)
+> **Note**: Windsurf hooks do NOT have a "matcher" concept. Each hook event fires for all occurrences of that event. If you need event-specific filtering (e.g., only act on Python files), implement that logic inside your script.
 
 ---
 
-## Syntax
+## Configuration File Locations
 
-Matchers use JavaScript regex syntax:
+Hooks are loaded from all three locations and merged (system → user → workspace):
 
-```json
-{
-  "matcher": "pattern"
-}
-```
-
-The pattern is tested against the tool name using `new RegExp(pattern).test(toolName)`.
+| Scope | Path |
+|-------|------|
+| **Workspace** | `.windsurf/hooks.json` (version-controlled, project-specific) |
+| **User** | `~/.codeium/windsurf/hooks.json` (personal preferences) |
+| **System (macOS)** | `/Library/Application Support/Windsurf/hooks.json` |
+| **System (Linux/WSL)** | `/etc/windsurf/hooks.json` |
+| **System (Windows)** | `C:\ProgramData\Windsurf\hooks.json` |
 
 ---
 
-## Common Patterns
+## Config Structure
 
-### Exact match
-```json
-{
-  "matcher": "Bash"
-}
-```
-Matches: `Bash`
-Doesn't match: `bash`, `BashOutput`
-
-### Multiple tools (OR)
-```json
-{
-  "matcher": "Write|Edit"
-}
-```
-Matches: `Write`, `Edit`
-Doesn't match: `Read`, `Bash`
-
-### Starts with
-```json
-{
-  "matcher": "^Bash"
-}
-```
-Matches: `Bash`, `BashOutput`
-Doesn't match: `Read`
-
-### Ends with
-```json
-{
-  "matcher": "Output$"
-}
-```
-Matches: `BashOutput`
-Doesn't match: `Bash`, `Read`
-
-### Contains
-```json
-{
-  "matcher": ".*write.*"
-}
-```
-Matches: `Write`, `NotebookWrite`, `TodoWrite`
-Doesn't match: `Read`, `Edit`
-
-Case-sensitive! `write` won't match `Write`.
-
-### Any tool (no matcher)
 ```json
 {
   "hooks": {
-    "PreToolUse": [
+    "<event_name>": [
       {
-        "hooks": [...]  // No matcher = matches all tools
+        "command": "your command here",
+        "show_output": true,
+        "working_directory": "/optional/path"
       }
     ]
   }
 }
 ```
 
----
+### Hook entry fields
 
-## Tool Categories
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `command` | string | Yes | Shell command to execute |
+| `show_output` | boolean | No | Show hook stdout/stderr in Cascade UI. Default: false |
+| `working_directory` | string | No | Directory to run command from. Defaults to workspace root |
 
-### All file operations
-```json
-{
-  "matcher": "Read|Write|Edit|Glob|Grep"
-}
-```
-
-### All bash tools
-```json
-{
-  "matcher": "Bash.*"
-}
-```
-Matches: `Bash`, `BashOutput`, `BashKill`
-
-### All MCP tools
-```json
-{
-  "matcher": "mcp__.*"
-}
-```
-Matches: `mcp__memory__store`, `mcp__filesystem__read`, etc.
-
-### Specific MCP server
-```json
-{
-  "matcher": "mcp__memory__.*"
-}
-```
-Matches: `mcp__memory__store`, `mcp__memory__retrieve`
-Doesn't match: `mcp__filesystem__read`
-
-### Specific MCP tool
-```json
-{
-  "matcher": "mcp__.*__write.*"
-}
-```
-Matches: `mcp__filesystem__write`, `mcp__memory__write`
-Doesn't match: `mcp__filesystem__read`
+### Notes on `working_directory`
+- Relative paths resolve from workspace root
+- Absolute paths are supported
+- `~` expansion is **not** supported — use absolute paths for home-relative scripts
+- In multi-repo workspaces, default is the root of the repo being worked on
 
 ---
 
-## MCP Tool Naming
+## Multiple hooks per event
 
-MCP tools follow the pattern: `mcp__{server}__{tool}`
-
-Examples:
-- `mcp__memory__store`
-- `mcp__filesystem__read`
-- `mcp__github__create_issue`
-
-**Match all tools from a server**:
-```json
-{
-  "matcher": "mcp__github__.*"
-}
-```
-
-**Match specific tool across all servers**:
-```json
-{
-  "matcher": "mcp__.*__read.*"
-}
-```
-
----
-
-## Real-World Examples
-
-### Log all bash commands
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "jq -r '.tool_input.command' >> ~/bash-log.txt"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-### Format code after any file write
-```json
-{
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit|NotebookEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "prettier --write $CLAUDE_PROJECT_DIR"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-### Validate all MCP memory writes
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "mcp__memory__.*",
-        "hooks": [
-          {
-            "type": "prompt",
-            "prompt": "Validate this memory operation: $ARGUMENTS\n\nCheck if data is appropriate to store.\n\nReturn: {\"decision\": \"approve\" or \"block\", \"reason\": \"why\"}"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-### Block destructive git commands
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/path/to/check-git-safety.sh"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-`check-git-safety.sh`:
-```bash
-#!/bin/bash
-input=$(cat)
-command=$(echo "$input" | jq -r '.tool_input.command')
-
-if [[ "$command" == *"git push --force"* ]] || \
-   [[ "$command" == *"rm -rf /"* ]] || \
-   [[ "$command" == *"git reset --hard"* ]]; then
-  echo '{"decision": "block", "reason": "Destructive command detected"}'
-else
-  echo '{"decision": "approve", "reason": "Safe"}'
-fi
-```
-
----
-
-## Multiple Matchers
-
-You can have multiple matcher blocks for the same event:
+You can list multiple hooks for the same event. They execute in order:
 
 ```json
 {
   "hooks": {
-    "PreToolUse": [
+    "pre_run_command": [
       {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/path/to/bash-validator.sh"
-          }
-        ]
+        "command": "python3 .windsurf/hooks/log.py",
+        "show_output": false
       },
       {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/path/to/file-validator.sh"
-          }
-        ]
-      },
-      {
-        "matcher": "mcp__.*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/path/to/mcp-logger.sh"
-          }
-        ]
+        "command": "python3 .windsurf/hooks/block_dangerous.py",
+        "show_output": true
       }
     ]
   }
 }
 ```
 
-Each matcher is evaluated independently. A tool can match multiple matchers.
+All hooks in the list run regardless of whether one blocks. The action is blocked if **any** hook exits with code `2`.
 
 ---
 
-## Debugging Matchers
+## Filtering inside scripts
 
-### Enable debug mode
+Since there are no matchers, filter by event data inside your script:
+
+```python
+import sys, json
+
+data = json.loads(sys.stdin.read())
+file_path = data.get("tool_info", {}).get("file_path", "")
+
+# Only act on Python files
+if not file_path.endswith(".py"):
+    sys.exit(0)
+
+# Your logic here...
+```
+
+---
+
+## Validating your config
+
+Always validate your JSON before relying on hooks:
+
 ```bash
-claude --debug
+# PowerShell (Windows)
+Get-Content .windsurf/hooks.json | ConvertFrom-Json
+
+# macOS/Linux
+python3 -m json.tool .windsurf/hooks.json
+
+# Or with jq
+jq . .windsurf/hooks.json
 ```
 
-Debug output shows:
-```
-[DEBUG] Getting matching hook commands for PreToolUse with query: Bash
-[DEBUG] Found 3 hook matchers in settings
-[DEBUG] Matched 1 hooks for query "Bash"
-```
-
-### Test your matcher
-
-Use JavaScript regex to test patterns:
-
-```javascript
-const toolName = "mcp__memory__store";
-const pattern = "mcp__memory__.*";
-const regex = new RegExp(pattern);
-console.log(regex.test(toolName)); // true
-```
-
-Or in Node.js:
-```bash
-node -e "console.log(/mcp__memory__.*/.test('mcp__memory__store'))"
-```
-
-### Common mistakes
-
-❌ **Case sensitivity**
-```json
-{
-  "matcher": "bash"  // Won't match "Bash"
-}
-```
-
-✅ **Correct**
-```json
-{
-  "matcher": "Bash"
-}
-```
+Invalid JSON is silently ignored — hooks won't fire if the config is malformed.
 
 ---
 
-❌ **Missing escape**
-```json
-{
-  "matcher": "mcp__memory__*"  // * is literal, not wildcard
-}
+## Recommended project layout
+
+Keep hook scripts alongside the config for portability:
+
+```
+.windsurf/
+  hooks.json              ← config
+  hooks/
+    log_input.py          ← logging script
+    block_dangerous.py    ← safety script
+    format_on_save.py     ← formatter script
+    restrict_access.py    ← access control script
 ```
 
-✅ **Correct**
+Reference scripts with relative paths from workspace root:
+
 ```json
 {
-  "matcher": "mcp__memory__.*"  // .* is regex for "any characters"
+  "command": "python3 .windsurf/hooks/block_dangerous.py"
 }
 ```
-
----
-
-❌ **Unintended partial match**
-```json
-{
-  "matcher": "Write"  // Matches "Write", "TodoWrite", "NotebookWrite"
-}
-```
-
-✅ **Exact match only**
-```json
-{
-  "matcher": "^Write$"
-}
-```
-
----
-
-## Advanced Patterns
-
-### Negative lookahead (exclude tools)
-```json
-{
-  "matcher": "^(?!Read).*"
-}
-```
-Matches: Everything except `Read`
-
-### Match any file operation except Grep
-```json
-{
-  "matcher": "^(Read|Write|Edit|Glob)$"
-}
-```
-
-### Case-insensitive match
-```json
-{
-  "matcher": "(?i)bash"
-}
-```
-Matches: `Bash`, `bash`, `BASH`
-
-(Note: Claude Code tools are PascalCase by convention, so this is rarely needed)
-
----
-
-## Performance Considerations
-
-**Broad matchers** (e.g., `.*`) run on every tool use:
-- Simple command hooks: negligible impact
-- Prompt hooks: can slow down significantly
-
-**Recommendation**: Be as specific as possible with matchers to minimize unnecessary hook executions.
-
-**Example**: Instead of matching all tools and checking inside the hook:
-```json
-{
-  "matcher": ".*",  // Runs on EVERY tool
-  "hooks": [
-    {
-      "type": "command",
-      "command": "if [[ $(jq -r '.tool_name') == 'Bash' ]]; then ...; fi"
-    }
-  ]
-}
-```
-
-Do this:
-```json
-{
-  "matcher": "Bash",  // Only runs on Bash
-  "hooks": [
-    {
-      "type": "command",
-      "command": "..."
-    }
-  ]
-}
-```
-
----
-
-## Tool Name Reference
-
-Common Claude Code tool names:
-- `Bash`
-- `BashOutput`
-- `KillShell`
-- `Read`
-- `Write`
-- `Edit`
-- `Glob`
-- `Grep`
-- `TodoWrite`
-- `NotebookEdit`
-- `WebFetch`
-- `WebSearch`
-- `Task`
-- `Skill`
-- `SlashCommand`
-- `AskUserQuestion`
-- `ExitPlanMode`
-
-MCP tools: `mcp__{server}__{tool}` (varies by installed servers)
-
-Run `claude --debug` and watch tool calls to discover available tool names.
