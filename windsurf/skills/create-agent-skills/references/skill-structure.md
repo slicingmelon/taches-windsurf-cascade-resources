@@ -91,7 +91,7 @@ description: What it does and when to use it (third person, specific triggers)
 - Maximum 64 characters
 - Lowercase letters, numbers, hyphens only
 - No XML tags
-- No reserved words: "anthropic", "claude"
+- No reserved words: "anthropic", "cascade"
 - Must match directory name exactly
 
 **Examples**:
@@ -100,7 +100,7 @@ description: What it does and when to use it (third person, specific triggers)
 - ✅ `setup-stripe-payments`
 - ❌ `PDF_Processor` (uppercase)
 - ❌ `helper` (vague)
-- ❌ `claude-helper` (reserved word)
+- ❌ `cascade-helper` (reserved word)
 </name_field>
 
 <description_field>
@@ -171,7 +171,7 @@ Examples: `generate-ai-images`
 <avoid_patterns>
 - Vague: `helper`, `utils`, `tools`
 - Generic: `documents`, `data`, `files`
-- Reserved words: `anthropic-helper`, `claude-tools`
+- Reserved words: `anthropic-helper`, `cascade-tools`
 - Inconsistent: Directory `facebook-ads` but name `facebook-ads-manager`
 </avoid_patterns>
 </naming_conventions>
@@ -217,7 +217,7 @@ with pdfplumber.open("file.pdf") as pdf:
 </advanced_features>
 ```
 
-Claude loads forms.md or reference.md only when needed.
+Cascade loads forms.md or reference.md only when needed.
 </pattern>
 
 <pattern name="domain_organization">
@@ -233,7 +233,7 @@ bigquery-skill/
     └── marketing.md (campaigns, attribution)
 ```
 
-When user asks about revenue, Claude reads only finance.md. Other files stay on filesystem consuming zero tokens.
+When user asks about revenue, Cascade reads only finance.md. Other files stay on filesystem consuming zero tokens.
 </pattern>
 
 <pattern name="conditional_details">
@@ -258,11 +258,11 @@ For simple edits, modify XML directly.
 </quick_start>
 ```
 
-Claude reads redlining.md or ooxml.md only when the user needs those features.
+Cascade reads redlining.md or ooxml.md only when the user needs those features.
 </pattern>
 
 <critical_rules>
-**Keep references one level deep**: All reference files should link directly from SKILL.md. Avoid nested references (SKILL.md → advanced.md → details.md) as Claude may only partially read deeply nested files.
+**Keep references one level deep**: All reference files should link directly from SKILL.md. Avoid nested references (SKILL.md → advanced.md → details.md) as Cascade may only partially read deeply nested files.
 
 **Add table of contents to long files**: For reference files over 100 lines, include a table of contents at the top.
 
@@ -272,7 +272,7 @@ Claude reads redlining.md or ooxml.md only when the user needs those features.
 
 <file_organization>
 <filesystem_navigation>
-Claude navigates your skill directory using bash commands:
+Cascade navigates your skill directory using bash commands:
 
 - Use forward slashes: `reference/guide.md` (not `reference\guide.md`)
 - Name files descriptively: `form_validation_rules.md` (not `doc2.md`)
@@ -345,7 +345,7 @@ Form filling...
 </pitfall>
 
 <pitfall name="deeply_nested_references">
-Keep references one level deep from SKILL.md. Claude may only partially read nested files (SKILL.md → advanced.md → details.md).
+Keep references one level deep from SKILL.md. Cascade may only partially read nested files (SKILL.md → advanced.md → details.md).
 </pitfall>
 
 <pitfall name="windows_paths">

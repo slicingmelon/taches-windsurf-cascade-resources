@@ -26,7 +26,7 @@ Explain:
 ```
 Ralph is Geoffrey Huntley's autonomous coding technique. In its purest form:
 
-    while :; do cat PROMPT.md | claude ; done
+    while :; do cat PROMPT.md | cascade ; done
 
 That's it. 16 characters of bash plus a prompt file.
 

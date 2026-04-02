@@ -46,7 +46,7 @@ python3 -m json.tool .windsurf/hooks.json
 
 Event names are lowercase with underscores. Common mistakes:
 
-❌ Wrong (Claude Code style)
+❌ Wrong (Cascade style)
 ```json
 { "PreToolUse": [...] }
 ```

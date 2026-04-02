@@ -3,7 +3,7 @@
 <overview>
 This workflow creates a complete, working MCP server from scratch with zero manual configuration. Use this when Lex wants to build a new MCP server - it handles everything automatically.
 
-**End state**: Server running in both Claude Code and Claude Desktop with all credentials configured.
+**End state**: Server running in both Cascade and Cascade Desktop with all credentials configured.
 </overview>
 
 <workflow>
@@ -17,8 +17,8 @@ Copy this and check off items as you complete them:
 - [ ] Step 2: Create project structure
 - [ ] Step 3: Generate server code
 - [ ] Step 4: Configure environment variables
-- [ ] Step 5: Install in Claude Code
-- [ ] Step 6: Install in Claude Desktop
+- [ ] Step 5: Install in Cascade
+- [ ] Step 6: Install in Cascade Desktop
 - [ ] Step 7: Test and verify
 ```
 
@@ -557,7 +557,7 @@ done
 
 ---
 
-## Step 5: Install in Claude Code
+## Step 5: Install in Cascade
 
 ```bash
 # Get absolute path to uv (for Python) or node (for TypeScript)
@@ -572,17 +572,17 @@ done
 
 # Install based on language
 if [ "{language}" = "Python" ]; then
-  claude mcp add --transport stdio {server-name} \
+  cascade mcp add --transport stdio {server-name} \
     $ENV_FLAGS \
     -- uv --directory ~/Developer/mcp/{server-name} run python -m src.server
 else
-  claude mcp add --transport stdio {server-name} \
+  cascade mcp add --transport stdio {server-name} \
     $ENV_FLAGS \
     -- node ~/Developer/mcp/{server-name}/build/index.js
 fi
 
 # Verify installation
-claude mcp list | grep {server-name}
+cascade mcp list | grep {server-name}
 ```
 
 **Expected output:**
@@ -592,13 +592,13 @@ claude mcp list | grep {server-name}
 
 ---
 
-## Step 6: Install in Claude Desktop
+## Step 6: Install in Cascade Desktop
 
 ```bash
 # Get paths
 UV_PATH=$(which uv)
 NODE_PATH=$(which node)
-DESKTOP_CONFIG="$HOME/Library/Application Support/Claude/claude_desktop_config.json"
+DESKTOP_CONFIG="$HOME/Library/Application Support/Cascade/cascade_desktop_config.json"
 
 # Backup config
 cp "$DESKTOP_CONFIG" "$DESKTOP_CONFIG.backup.$(date +%s)"
@@ -636,8 +636,8 @@ jq --arg name "{server-name}" \
 
 mv "$DESKTOP_CONFIG.tmp" "$DESKTOP_CONFIG"
 
-echo "✓ Installed in Claude Desktop"
-echo "⚠️  IMPORTANT: Restart Claude Desktop for changes to take effect"
+echo "✓ Installed in Cascade Desktop"
+echo "⚠️  IMPORTANT: Restart Cascade Desktop for changes to take effect"
 ```
 
 **Generate env_json from environment variables:**
@@ -667,26 +667,26 @@ node build/index.js
 # Press Ctrl+C to exit
 ```
 
-**Verify in Claude Code:**
+**Verify in Cascade:**
 ```bash
 # Check server appears
-claude mcp list
+cascade mcp list
 
 # Check logs (if there are issues)
-tail -50 ~/Library/Logs/Claude/mcp-server-{server-name}.log
+tail -50 ~/Library/Logs/Cascade/mcp-server-{server-name}.log
 ```
 
-**Verify in Claude Desktop:**
-1. Restart Claude Desktop
+**Verify in Cascade Desktop:**
+1. Restart Cascade Desktop
 2. Open new conversation
 3. Try using a tool from the server
 4. Check it works
 
 **Final checklist:**
 ```
-- [ ] Server appears in `claude mcp list` with ✓ Connected
+- [ ] Server appears in `cascade mcp list` with ✓ Connected
 - [ ] Environment variables are set in ~/.zshrc
-- [ ] Server added to Claude Desktop config
+- [ ] Server added to Cascade Desktop config
 - [ ] Test tool call succeeds
 - [ ] No errors in logs
 ```
@@ -733,21 +733,21 @@ done
 
 **Step 5 validation:**
 ```bash
-# Check Claude Code installation
-claude mcp list | grep -q "{server-name}" && echo "✓ Installed in Claude Code" || echo "✗ Not installed"
+# Check Cascade installation
+cascade mcp list | grep -q "{server-name}" && echo "✓ Installed in Cascade" || echo "✗ Not installed"
 ```
 
 **Step 6 validation:**
 ```bash
-# Check Claude Desktop config
-jq '.mcpServers | has("{server-name}")' "$HOME/Library/Application Support/Claude/claude_desktop_config.json"
+# Check Cascade Desktop config
+jq '.mcpServers | has("{server-name}")' "$HOME/Library/Application Support/Cascade/cascade_desktop_config.json"
 # Should output: true
 ```
 
 **Step 7 validation:**
 ```bash
 # Check server health
-claude mcp list | grep "{server-name}"
+cascade mcp list | grep "{server-name}"
 # Should show: ✓ Connected
 ```
 
@@ -776,16 +776,16 @@ echo 'export ENV_VAR_NAME="value"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
-**"Server not appearing in Claude Code":**
+**"Server not appearing in Cascade":**
 ```bash
 # Check installation
-claude mcp list
+cascade mcp list
 
 # Check logs
-tail -50 ~/Library/Logs/Claude/mcp-server-{server-name}.log
+tail -50 ~/Library/Logs/Cascade/mcp-server-{server-name}.log
 
 # Reinstall
-claude mcp remove {server-name}
+cascade mcp remove {server-name}
 # Then repeat Step 5
 ```
 
@@ -815,7 +815,7 @@ npm run build
 
 **Always use absolute paths:**
 - Find with: `which uv`, `which node`
-- Claude Desktop requires absolute paths
+- Cascade Desktop requires absolute paths
 
 **Environment variable security:**
 - Never hardcode secrets in code
@@ -828,7 +828,7 @@ npm run build
 - Verify env vars are actually set
 
 **Backup before modifying:**
-- Claude Desktop config is backed up automatically
-- Can restore with: `cp claude_desktop_config.json.backup.<timestamp> claude_desktop_config.json`
+- Cascade Desktop config is backed up automatically
+- Can restore with: `cp cascade_desktop_config.json.backup.<timestamp> cascade_desktop_config.json`
 
 </notes>

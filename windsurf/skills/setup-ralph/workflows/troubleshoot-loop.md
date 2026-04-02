@@ -139,21 +139,20 @@ If missing, run setup again or create from templates.
 
 **Check Cascade CLI:**
 ```bash
-claude --version
+cascade --version
 ```
-If not found: `npm install -g @anthropic-ai/claude-code`
+If not found: install Windsurf and ensure the CLI is in your PATH
 
 **Check OAuth token (for headless mode):**
 ```bash
 # Verify token exists
-cat ~/.claude-oauth-token
+cat ~/.windsurf-oauth-token
 
-# If missing, run:
-claude setup-token
-# Save to ~/.claude-oauth-token
+# If missing, save your Windsurf OAuth token:
+echo "YOUR-WINDSURF-TOKEN" > ~/.windsurf-oauth-token
 
 # Set permissions
-chmod 600 ~/.claude-oauth-token
+chmod 600 ~/.windsurf-oauth-token
 ```
 
 **Check plan file for build mode:**

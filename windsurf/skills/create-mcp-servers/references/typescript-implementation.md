@@ -602,7 +602,7 @@ Users install with:
 npm install -g my-mcp-server
 ```
 
-Claude Desktop config:
+Cascade Desktop config:
 ```json
 {
   "mcpServers": {

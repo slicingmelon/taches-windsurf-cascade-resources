@@ -7,7 +7,7 @@ A Windsurf Cascade skill that sets up [Ralph Wiggum loops](https://ghuntley.com/
 Ralph is an autonomous coding methodology where Cascade runs in a loop:
 
 ```bash
-while :; do cat PROMPT.md | claude -p --dangerously-skip-permissions; done
+while :; do cat PROMPT.md | cascade -p --dangerously-skip-permissions; done
 ```
 
 Each iteration:
@@ -110,12 +110,9 @@ When Ralph struggles repeatedly, update the environment (specs, AGENTS.md, promp
 ## OAuth Setup (Required for Headless Mode)
 
 ```bash
-# Generate token
-claude setup-token
-
-# Save it
-echo "sk-ant-oat01-YOUR-TOKEN" > ~/.claude-oauth-token
-chmod 600 ~/.claude-oauth-token
+# Save your Windsurf OAuth token
+echo "YOUR-WINDSURF-TOKEN" > ~/.windsurf-oauth-token
+chmod 600 ~/.windsurf-oauth-token
 ```
 
 The loop scripts automatically load this token.

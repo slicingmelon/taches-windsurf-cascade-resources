@@ -40,7 +40,7 @@ This reference documents what Cascade CAN and SHOULD automate during plan execut
 ### Railway
 **CLI:** `railway`
 
-**What Claude automates:**
+**What Cascade automates:**
 - Initialize project: `railway init`
 - Link to repo: `railway link`
 - Deploy: `railway up`
@@ -50,7 +50,7 @@ This reference documents what Cascade CAN and SHOULD automate during plan execut
 ### Fly.io
 **CLI:** `fly`
 
-**What Claude automates:**
+**What Cascade automates:**
 - Launch app: `fly launch --no-deploy`
 - Deploy: `fly deploy`
 - Set secrets: `fly secrets set KEY=value`
@@ -61,7 +61,7 @@ This reference documents what Cascade CAN and SHOULD automate during plan execut
 ### Stripe
 **CLI:** `stripe`
 
-**What Claude automates:**
+**What Cascade automates:**
 - Create webhook endpoints: `stripe listen --forward-to localhost:3000/api/webhooks`
 - Trigger test events: `stripe trigger payment_intent.succeeded`
 - Create products/prices: Stripe API via curl/fetch
@@ -93,7 +93,7 @@ This reference documents what Cascade CAN and SHOULD automate during plan execut
 ### Supabase
 **CLI:** `supabase`
 
-**What Claude automates:**
+**What Cascade automates:**
 - Initialize project: `supabase init`
 - Link to remote: `supabase link --project-ref {ref}`
 - Create migrations: `supabase migration new {name}`
@@ -111,7 +111,7 @@ This reference documents what Cascade CAN and SHOULD automate during plan execut
 ### Upstash (Redis/Kafka)
 **CLI:** `upstash`
 
-**What Claude automates:**
+**What Cascade automates:**
 - Create Redis database: `upstash redis create {name} --region {region}`
 - Get connection details: `upstash redis get {id}`
 - Create Kafka cluster: `upstash kafka create {name} --region {region}`
@@ -133,7 +133,7 @@ This reference documents what Cascade CAN and SHOULD automate during plan execut
 ### PlanetScale
 **CLI:** `pscale`
 
-**What Claude automates:**
+**What Cascade automates:**
 - Create database: `pscale database create {name} --region {region}`
 - Create branch: `pscale branch create {db} {branch}`
 - Deploy request: `pscale deploy-request create {db} {branch}`
@@ -144,7 +144,7 @@ This reference documents what Cascade CAN and SHOULD automate during plan execut
 ### GitHub
 **CLI:** `gh`
 
-**What Claude automates:**
+**What Cascade automates:**
 - Create repo: `gh repo create {name} --public/--private`
 - Create issues: `gh issue create --title "{title}" --body "{body}"`
 - Create PR: `gh pr create --title "{title}" --body "{body}"`
@@ -160,7 +160,7 @@ This reference documents what Cascade CAN and SHOULD automate during plan execut
 ## Build Tools & Testing
 
 ### Node/npm/pnpm/bun
-**What Claude automates:**
+**What Cascade automates:**
 - Install dependencies: `npm install`, `pnpm install`, `bun install`
 - Run builds: `npm run build`
 - Run tests: `npm test`, `npm run test:e2e`
@@ -171,7 +171,7 @@ This reference documents what Cascade CAN and SHOULD automate during plan execut
 ### Xcode (macOS/iOS)
 **CLI:** `xcodebuild`
 
-**What Claude automates:**
+**What Cascade automates:**
 - Build project: `xcodebuild -project App.xcodeproj -scheme App build`
 - Run tests: `xcodebuild test -project App.xcodeproj -scheme App`
 - Archive: `xcodebuild archive -project App.xcodeproj -scheme App`
@@ -202,7 +202,7 @@ This reference documents what Cascade CAN and SHOULD automate during plan execut
 ### .env Files
 **Tool:** Write tool
 
-**What Claude automates:**
+**What Cascade automates:**
 - Create .env files: Use Write tool
 - Append variables: Use Edit tool
 - Read current values: Use Read tool
@@ -226,7 +226,7 @@ This reference documents what Cascade CAN and SHOULD automate during plan execut
 ### Resend
 **API:** Resend API via HTTP
 
-**What Claude automates:**
+**What Cascade automates:**
 - Create API keys via dashboard API (if available) or instructions for one-time setup
 - Send emails: Resend API
 - Configure domains: Resend API
@@ -234,7 +234,7 @@ This reference documents what Cascade CAN and SHOULD automate during plan execut
 ### SendGrid
 **API:** SendGrid API via HTTP
 
-**What Claude automates:**
+**What Cascade automates:**
 - Create API keys via API
 - Send emails: SendGrid API
 - Configure webhooks: SendGrid API

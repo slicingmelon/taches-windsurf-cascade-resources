@@ -1,20 +1,20 @@
 # Auto-Installation for MCP Servers
 
-Complete guide for automatically installing MCP servers in both Claude Code and Claude Desktop with safe credential management.
+Complete guide for automatically installing MCP servers in both Cascade and Cascade Desktop with safe credential management.
 
 ## Overview
 
 When you build an MCP server, you want it instantly available in both:
-- **Claude Code** - For development and coding workflows
-- **Claude Desktop** - For conversational usage
+- **Cascade** - For development and coding workflows
+- **Cascade Desktop** - For conversational usage
 
 This guide provides scripts and patterns for zero-friction installation.
 
 ## The Problem
 
 Manual MCP installation requires:
-1. Adding to Claude Code via CLI (`claude mcp add`)
-2. Editing Claude Desktop config JSON manually
+1. Adding to Cascade via CLI (`cascade mcp add`)
+2. Editing Cascade Desktop config JSON manually
 3. Copying credentials to multiple places
 4. Restarting both applications
 5. Testing that everything works
@@ -26,8 +26,8 @@ This is tedious and error-prone.
 A manual configuration approach with secure patterns:
 1. Store credentials in `~/.mcp_secrets` with `chmod 600`
 2. Use variable expansion (`${VAR}`) in all configs
-3. Install in Claude Code (user scope)
-4. Manually update Claude Desktop config with variable references
+3. Install in Cascade (user scope)
+4. Manually update Cascade Desktop config with variable references
 5. Never write hardcoded secrets to configuration files
 
 **Why not automated?** Auto-installation scripts that write actual credential values to configs are insecure. The recommended pattern uses variable expansion everywhere.
@@ -62,25 +62,25 @@ Reload:
 source ~/.zshrc  # or ~/.bashrc
 ```
 
-### Step 2: Install in Claude Code
+### Step 2: Install in Cascade
 
 ```bash
 # Source secrets
 source ~/.mcp_secrets
 
-# Install with actual values (Claude Code stores them securely)
-claude mcp add --transport stdio meta-ads \
+# Install with actual values (Cascade stores them securely)
+cascade mcp add --transport stdio meta-ads \
   --scope user \
   --env META_ACCESS_TOKEN=${META_ACCESS_TOKEN} \
   --env META_AD_ACCOUNT_ID=${META_AD_ACCOUNT_ID} \
   -- uv --directory ~/Developer/mcp/meta-ads-mcp run python -m src.server
 ```
 
-**Note:** When using `claude mcp add`, you pass actual values. Claude Code stores them securely in `~/.claude/.claude.json` and references them correctly.
+**Note:** When using `cascade mcp add`, you pass actual values. Cascade stores them securely in `~/.cascade/.cascade.json` and references them correctly.
 
-### Step 3: Configure Claude Desktop
+### Step 3: Configure Cascade Desktop
 
-Edit `~/Library/Application Support/Claude/claude_desktop_config.json`:
+Edit `~/Library/Application Support/Cascade/cascade_desktop_config.json`:
 
 ```json
 {
@@ -103,14 +103,14 @@ Edit `~/Library/Application Support/Claude/claude_desktop_config.json`:
 ### Step 4: Verify Installation
 
 ```bash
-# Check Claude Code
-claude mcp list
+# Check Cascade
+cascade mcp list
 
 # Test environment variables
 echo $META_ACCESS_TOKEN  # Should show value
 ```
 
-Restart Claude Desktop and test.
+Restart Cascade Desktop and test.
 
 ## Complete Examples
 
@@ -121,16 +121,16 @@ Restart Claude Desktop and test.
 export STRIPE_API_KEY="sk_live_abc123"
 ```
 
-**2. Install in Claude Code:**
+**2. Install in Cascade:**
 ```bash
 source ~/.mcp_secrets
-claude mcp add --transport stdio stripe \
+cascade mcp add --transport stdio stripe \
   --scope user \
   --env STRIPE_API_KEY=${STRIPE_API_KEY} \
   -- uv --directory ~/Developer/mcp/stripe-mcp run python -m src.server
 ```
 
-**3. Configure Claude Desktop:**
+**3. Configure Cascade Desktop:**
 ```json
 {
   "mcpServers": {
@@ -156,10 +156,10 @@ export GHL_CLIENT_API_TOKEN="pit_client_xyz"
 export GHL_CLIENT_LOCATION_ID="loc_client_456"
 ```
 
-**2. Install in Claude Code:**
+**2. Install in Cascade:**
 ```bash
 source ~/.mcp_secrets
-claude mcp add --transport stdio ghl \
+cascade mcp add --transport stdio ghl \
   --scope user \
   --env GHL_MAIN_API_TOKEN=${GHL_MAIN_API_TOKEN} \
   --env GHL_MAIN_LOCATION_ID=${GHL_MAIN_LOCATION_ID} \
@@ -168,7 +168,7 @@ claude mcp add --transport stdio ghl \
   -- uv --directory ~/Developer/mcp/ghl-mcp run python -m src.server
 ```
 
-**3. Configure Claude Desktop:**
+**3. Configure Cascade Desktop:**
 ```json
 {
   "mcpServers": {
@@ -236,44 +236,44 @@ fi
 
 ## Verification
 
-### Check Claude Code Installation
+### Check Cascade Installation
 ```bash
 # List all installed servers
-claude mcp list
+cascade mcp list
 
 # Get specific server details
-claude mcp get meta-ads
+cascade mcp get meta-ads
 
 # Remove if needed
-claude mcp remove meta-ads
+cascade mcp remove meta-ads
 ```
 
-### Check Claude Desktop Configuration
+### Check Cascade Desktop Configuration
 
 ```bash
 # View all servers
-cat ~/Library/Application\ Support/Claude/claude_desktop_config.json | jq '.mcpServers'
+cat ~/Library/Application\ Support/Cascade/cascade_desktop_config.json | jq '.mcpServers'
 
 # Check specific server
-cat ~/Library/Application\ Support/Claude/claude_desktop_config.json | jq '.mcpServers["meta-ads"]'
+cat ~/Library/Application\ Support/Cascade/cascade_desktop_config.json | jq '.mcpServers["meta-ads"]'
 
 # Verify cwd property is set
-cat ~/Library/Application\ Support/Claude/claude_desktop_config.json | jq '.mcpServers["meta-ads"].cwd'
+cat ~/Library/Application\ Support/Cascade/cascade_desktop_config.json | jq '.mcpServers["meta-ads"].cwd'
 
 # Verify env uses variable expansion
-cat ~/Library/Application\ Support/Claude/claude_desktop_config.json | jq '.mcpServers["meta-ads"].env'
+cat ~/Library/Application\ Support/Cascade/cascade_desktop_config.json | jq '.mcpServers["meta-ads"].env'
 ```
 
 Ensure configs show `${VAR}` syntax, not actual values.
 
 ### Test in Conversation
 
-**Claude Code:**
+**Cascade:**
 - Open any project
 - Ask: "List available MCP servers"
 - Ask: "What Meta Ads operations are available?"
 
-**Claude Desktop:**
+**Cascade Desktop:**
 - Restart the app
 - Ask: "List available MCP servers"
 - Ask: "What Meta Ads operations are available?"
@@ -285,8 +285,8 @@ When creating MCP servers, include installation in your development process:
 ### Final Installation Steps
 
 1. **Add credentials to `~/.mcp_secrets`**
-2. **Install in Claude Code** using `claude mcp add` with actual values
-3. **Configure Claude Desktop** with variable expansion (`${VAR}`)
+2. **Install in Cascade** using `cascade mcp add` with actual values
+3. **Configure Cascade Desktop** with variable expansion (`${VAR}`)
 4. **Verify with security checklist**
 5. **Test in both environments**
 
@@ -294,31 +294,31 @@ This ensures secure, consistent installation across all clients.
 
 ## Troubleshooting
 
-**"Command not found: claude"**
-- Install Claude Code CLI: Open Claude Code → run `/install-cli`
+**"Command not found: cascade"**
+- Install Cascade CLI: Open Cascade → run `/install-cli`
 
 **"jq: command not found"**
 ```bash
 brew install jq  # macOS
 ```
 
-**"Server not appearing in Claude Code"**
+**"Server not appearing in Cascade"**
 ```bash
 # Check installation
-claude mcp list
+cascade mcp list
 
 # Try removing and reinstalling
-claude mcp remove <server-name>
-~/.claude/scripts/install-mcp.sh ...
+cascade mcp remove <server-name>
+~/.cascade/scripts/install-mcp.sh ...
 ```
 
-**"Server not appearing in Claude Desktop"**
-- Verify JSON syntax: `jq '.' ~/Library/Application\ Support/Claude/claude_desktop_config.json`
+**"Server not appearing in Cascade Desktop"**
+- Verify JSON syntax: `jq '.' ~/Library/Application\ Support/Cascade/cascade_desktop_config.json`
 - Check backup file if config is corrupted
-- Restart Claude Desktop
+- Restart Cascade Desktop
 
 **"Environment variable not found"**
-- Check `~/.claude/.env` exists
+- Check `~/.cascade/.env` exists
 - Verify variable names match exactly
 - Ensure no extra spaces: `KEY=value` not `KEY = value`
 
@@ -326,15 +326,15 @@ claude mcp remove <server-name>
 
 ### Installation Pattern
 
-**Claude Code:**
+**Cascade:**
 ```bash
-claude mcp add --transport stdio my-ts-server \
+cascade mcp add --transport stdio my-ts-server \
   --scope user \
   --env API_KEY=${API_KEY} \
   -- node ~/Developer/mcp/my-ts-server/dist/index.js
 ```
 
-**Claude Desktop:**
+**Cascade Desktop:**
 ```json
 {
   "mcpServers": {
@@ -358,10 +358,10 @@ For remote servers:
 
 ```bash
 # HTTP server
-claude mcp add --transport http my-server https://api.example.com/mcp
+cascade mcp add --transport http my-server https://api.example.com/mcp
 
 # SSE server with headers
-claude mcp add --transport sse my-server \
+cascade mcp add --transport sse my-server \
   --header "Authorization: Bearer $API_TOKEN" \
   https://mcp.example.com/sse
 ```
@@ -373,7 +373,7 @@ claude mcp add --transport sse my-server \
 1. **Never hardcode credentials** - Always use `${VAR}` variable expansion
 2. **Secure credential files** - `chmod 600 ~/.mcp_secrets`
 3. **Use `.gitignore`** - Never commit `.env`, `.env.local`, `*.key`, `secrets.json`
-4. **Variable expansion everywhere** - Claude Desktop configs must use `${VAR}`
+4. **Variable expansion everywhere** - Cascade Desktop configs must use `${VAR}`
 5. **Token rotation** - Update `~/.mcp_secrets`, restart clients
 6. **Pre-commit hooks** - Install to catch accidental commits
 7. **Always include `cwd`** - Set working directory in all configs

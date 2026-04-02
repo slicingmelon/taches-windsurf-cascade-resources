@@ -169,8 +169,8 @@ For research and plan outputs that may be large:
 - Simple tasks with known small outputs
 </streaming_writes>
 
-<claude_to_claude>
-For Claude-to-Claude consumption:
+<cascade_to_cascade>
+For Cascade-to-Cascade consumption:
 
 **Use heavy XML structure:**
 ```xml
@@ -199,7 +199,7 @@ For Claude-to-Claude consumption:
   <action priority="medium">Validate rate limits in sandbox</action>
 </next_actions>
 ```
-</claude_to_claude>
+</cascade_to_cascade>
 
 <human_consumption>
 For human consumption:
@@ -262,7 +262,7 @@ Use httpOnly cookies instead.
 ```
 </good_example>
 
-This helps the executing Claude make good decisions when facing edge cases.
+This helps the executing Cascade make good decisions when facing edge cases.
 
 </why_explanations>
 

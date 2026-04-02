@@ -10,7 +10,7 @@
 <title>Identify Symptom</title>
 
 Common symptoms:
-- Server not appearing in `claude mcp list`
+- Server not appearing in `cascade mcp list`
 - Server showing ✗ Disconnected
 - "command not found" errors
 - Environment variable not found
@@ -24,10 +24,10 @@ Common symptoms:
 Run these commands:
 ```bash
 # Check server status
-claude mcp list
+cascade mcp list
 
 # Check logs
-tail -50 ~/Library/Logs/Claude/mcp-server-{name}.log
+tail -50 ~/Library/Logs/Cascade/mcp-server-{name}.log
 
 # Check if command exists
 which uv && which node && which python
@@ -41,18 +41,18 @@ env | grep -E "^[A-Z_]+=" | cut -d= -f1 | sort
 <title>Diagnose Issue</title>
 
 <issue type="not_appearing">
-<symptom>Server not in `claude mcp list`</symptom>
+<symptom>Server not in `cascade mcp list`</symptom>
 <causes>
 - Server never added
 - Wrong server name
 - Config file syntax error
 </causes>
 <solution>
-Check Claude Code config:
+Check Cascade config:
 ```bash
-cat ~/.claude/settings.json | jq '.mcpServers'
+cat ~/.cascade/settings.json | jq '.mcpServers'
 ```
-Re-add if missing using `claude mcp add` command.
+Re-add if missing using `cascade mcp add` command.
 </solution>
 </issue>
 
@@ -84,8 +84,8 @@ Re-add if missing using `claude mcp add` command.
 2. Update config with absolute path
 3. Remove and re-add server:
 ```bash
-claude mcp remove {name}
-claude mcp add --transport stdio {name} -- /absolute/path/to/uv ...
+cascade mcp remove {name}
+cascade mcp add --transport stdio {name} -- /absolute/path/to/uv ...
 ```
 </solution>
 </issue>
@@ -104,7 +104,7 @@ claude mcp add --transport stdio {name} -- /absolute/path/to/uv ...
 echo 'export VAR_NAME="value"' >> ~/.zshrc
 source ~/.zshrc
 ```
-3. Restart Claude Code to pick up new variables
+3. Restart Cascade to pick up new variables
 </solution>
 </issue>
 
@@ -128,8 +128,8 @@ source ~/.zshrc
 Based on diagnosis:
 1. Make required changes
 2. Run relevant validation checkpoint
-3. Verify server connects: `claude mcp list`
-4. Check logs are clean: `tail -20 ~/Library/Logs/Claude/mcp-server-{name}.log`
+3. Verify server connects: `cascade mcp list`
+4. Check logs are clean: `tail -20 ~/Library/Logs/Cascade/mcp-server-{name}.log`
 </step>
 
 </process>

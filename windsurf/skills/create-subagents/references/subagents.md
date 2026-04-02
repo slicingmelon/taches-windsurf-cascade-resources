@@ -223,7 +223,7 @@ Follow the file format specified above (YAML frontmatter + system prompt).
 **Temporary**: Define subagents via CLI for session-specific use:
 
 ```bash
-claude --agents '{
+cascade --agents '{
   "code-reviewer": {
     "description": "Expert code reviewer. Use proactively after code changes.",
     "prompt": "You are a senior code reviewer. Focus on quality, security, and best practices.",

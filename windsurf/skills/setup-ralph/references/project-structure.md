@@ -11,7 +11,7 @@ Main orchestration script that runs the loop.
 **Minimal implementation:**
 ```bash
 #!/bin/bash
-while :; do cat PROMPT.md | claude ; done
+while :; do cat PROMPT.md | cascade ; done
 ```
 
 **Production implementation:**

@@ -71,9 +71,9 @@ Ask the user 2-4 questions using AskUserQuestion:
 - Option 2: **No, run directly** - Faster but runs with full host access. Use at your own risk.
 
 If Docker mode selected, check for OAuth token:
-1. Check `$CLAUDE_CODE_OAUTH_TOKEN` env var
-2. Check `~/.claude-oauth-token` file
-3. If neither found, instruct user: "Run `claude setup-token` and save to ~/.claude-oauth-token"
+1. Check `$WINDSURF_OAUTH_TOKEN` env var
+2. Check `~/.windsurf-oauth-token` file
+3. If neither found, instruct user: "Save your Windsurf OAuth token to ~/.windsurf-oauth-token"
 
 ## Step 5: Create Directory Structure
 
@@ -208,8 +208,7 @@ DOCKER MODE (if enabled):
 - First run: ./loop-docker.sh --build-image
 - Then: ./loop-docker.sh plan
 - Then: ./loop-docker.sh
-- Requires: ~/.claude-oauth-token or CLAUDE_CODE_OAUTH_TOKEN env var
-- Get token: claude setup-token
+- Requires: ~/.windsurf-oauth-token or WINDSURF_OAUTH_TOKEN env var
 
 FILES:
 - loop.sh              - Main orchestration script

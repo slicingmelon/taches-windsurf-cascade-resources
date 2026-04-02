@@ -41,8 +41,8 @@ if [ ! -f "PROMPT_build.md" ] && [ ! -f "PROMPT_plan.md" ]; then
 fi
 
 # Load OAuth token (with security checks)
-TOKEN_FILE="$HOME/.claude-oauth-token"
-if [ -z "$CLAUDE_CODE_OAUTH_TOKEN" ]; then
+TOKEN_FILE="$HOME/.windsurf-oauth-token"
+if [ -z "$WINDSURF_OAUTH_TOKEN" ]; then
   if [ -f "$TOKEN_FILE" ]; then
     # Security: Check file permissions (should be 600 or more restrictive)
     if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -57,11 +57,11 @@ if [ -z "$CLAUDE_CODE_OAUTH_TOKEN" ]; then
       echo ""
     fi
 
-    CLAUDE_CODE_OAUTH_TOKEN=$(cat "$TOKEN_FILE")
+    WINDSURF_OAUTH_TOKEN=$(cat "$TOKEN_FILE")
   else
     echo "Error: No OAuth token found"
-    echo "Run 'claude setup-token' and save to ~/.claude-oauth-token"
-    echo "Then: chmod 600 ~/.claude-oauth-token"
+    echo "Save your Windsurf OAuth token to ~/.windsurf-oauth-token"
+    echo "Then: chmod 600 ~/.windsurf-oauth-token"
     exit 1
   fi
 fi
@@ -220,9 +220,9 @@ while true; do
   if docker run --rm \
     -v "$PROJECT_DIR:/workspace" \
     -w /workspace \
-    -e "CLAUDE_CODE_OAUTH_TOKEN=$CLAUDE_CODE_OAUTH_TOKEN" \
+    -e "WINDSURF_OAUTH_TOKEN=$WINDSURF_OAUTH_TOKEN" \
     "$IMAGE_NAME" \
-    bash -c "cat '$PROMPT_FILE' | claude --model '$MODEL' -p --dangerously-skip-permissions --output-format text" \
+    bash -c "cat '$PROMPT_FILE' | cascade --model '$MODEL' -p --dangerously-skip-permissions --output-format text" \
     2>&1 | tee -a "$LOG_FILE"; then
 
     echo "Iteration $ITERATION complete"

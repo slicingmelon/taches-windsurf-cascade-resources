@@ -8,7 +8,7 @@ Core concepts and philosophy of Geoffrey Huntley's Ralph Wiggum autonomous codin
 Ralph is an autonomous AI coding methodology created by Geoffrey Huntley that went viral in late 2025. In its purest form, it's a Bash loop:
 
 ```bash
-while :; do cat PROMPT.md | claude ; done
+while :; do cat PROMPT.md | cascade ; done
 ```
 
 The loop continuously feeds a prompt file to the Cascade CLI. The agent completes one task, updates the implementation plan on disk, commits changes, then exits. The loop restarts immediately with fresh context.

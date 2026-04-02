@@ -61,7 +61,7 @@ If user's description or codebase contains domain keywords, INFER the domain:
 | "iOS", "iPhone", ".swift" + UIKit | expertise/iphone-apps |
 | "Unity", ".cs" + Unity imports | expertise/unity-games |
 | "SuperCollider", ".sc", ".scd" | expertise/supercollider |
-| "Agent SDK", "claude-agent" | expertise/with-agent-sdk |
+| "Agent SDK", "cascade-agent" | expertise/with-agent-sdk |
 
 If domain inferred, confirm:
 ```

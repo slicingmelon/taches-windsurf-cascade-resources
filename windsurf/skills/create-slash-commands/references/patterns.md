@@ -1,12 +1,12 @@
 # Command Patterns Reference
 
-Verified patterns from official Claude Code documentation.
+Verified patterns from official Cascade documentation.
 
 ## Git Workflow Patterns
 
 ### Pattern: Commit with Full Context
 
-**Source**: Official Claude Code documentation
+**Source**: Official Cascade documentation
 
 ```markdown
 ---
@@ -75,9 +75,9 @@ Current changes: ! `git status`
 
 ### Pattern: Performance Optimization
 
-**Source**: Official Claude Code documentation
+**Source**: Official Cascade documentation
 
-**File**: `.claude/commands/optimize.md`
+**File**: `.cascade/commands/optimize.md`
 ```markdown
 ---
 description: Analyze the performance of this code and suggest three specific optimizations
@@ -110,7 +110,7 @@ Cascade analyzes code in the current conversation context.
 
 ### Pattern: Security Review
 
-**File**: `.claude/commands/security-review.md`
+**File**: `.cascade/commands/security-review.md`
 ```markdown
 ---
 description: Review this code for security vulnerabilities
@@ -174,7 +174,7 @@ References the specified file.
 
 ### Pattern: Fix Issue with Workflow
 
-**Source**: Official Claude Code documentation
+**Source**: Official Cascade documentation
 
 ```markdown
 ---
@@ -244,7 +244,7 @@ Uses positional arguments for structured input.
 
 ### Pattern: File Reference
 
-**Source**: Official Claude Code documentation
+**Source**: Official Cascade documentation
 
 ```markdown
 ---

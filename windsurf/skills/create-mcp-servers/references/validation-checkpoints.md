@@ -71,27 +71,27 @@ done
 **Required before Step 6:**
 - [ ] All environment variables set
 
-## claude-code-install
+## cascade-code-install
 
 ```bash
 # Verify installation
-claude mcp list | grep {server-name}
+cascade mcp list | grep {server-name}
 # Expected: "{server-name}: ... - ✓ Connected"
 ```
 
 **If not connected, check logs:**
 ```bash
-tail -50 ~/Library/Logs/Claude/mcp-server-{server-name}.log
+tail -50 ~/Library/Logs/Cascade/mcp-server-{server-name}.log
 ```
 
 **Required before Step 7:**
 - [ ] Server shows "✓ Connected" status
 
-## claude-desktop-config
+## cascade-desktop-config
 
 ```bash
 # Verify config entry exists
-jq '.mcpServers | has("{server-name}")' "$HOME/Library/Application Support/Claude/claude_desktop_config.json"
+jq '.mcpServers | has("{server-name}")' "$HOME/Library/Application Support/Cascade/cascade_desktop_config.json"
 # Expected: true
 ```
 

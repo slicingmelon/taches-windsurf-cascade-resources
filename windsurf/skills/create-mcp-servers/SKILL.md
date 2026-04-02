@@ -113,23 +113,23 @@ Route directly to workflows/create-new-server.md
 <quick_reference>
 ```bash
 # List servers
-claude mcp list
+cascade mcp list
 
 # Add server (Python)
-claude mcp add --transport stdio <name> \
+cascade mcp add --transport stdio <name> \
   --env API_KEY='${API_KEY}' \
   -- uv --directory ~/Developer/mcp/<name> run python -m src.server
 
 # Add server (TypeScript)
-claude mcp add --transport stdio <name> \
+cascade mcp add --transport stdio <name> \
   --env API_KEY='${API_KEY}' \
   -- node ~/Developer/mcp/<name>/build/index.js
 
 # Remove server
-claude mcp remove <name>
+cascade mcp remove <name>
 
 # Check logs
-tail -f ~/Library/Logs/Claude/mcp-server-<name>.log
+tail -f ~/Library/Logs/Cascade/mcp-server-<name>.log
 
 # Find paths
 which uv && which node && which python
@@ -154,7 +154,7 @@ Full troubleshooting: workflows/troubleshoot-server.md
 
 <success_criteria>
 A production-ready MCP server has:
-- Valid configuration in Windsurf MCP config (`claude mcp list` shows ✓ Connected)
+- Valid configuration in Windsurf MCP config (`cascade mcp list` shows ✓ Connected)
 - Environment variables set securely in ~/.zshrc
 - Architecture matches operation count
 - OAuth stdio isolation if applicable

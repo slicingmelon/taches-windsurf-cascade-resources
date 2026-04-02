@@ -11,7 +11,7 @@
 
 List installed servers:
 ```bash
-claude mcp list
+cascade mcp list
 ```
 
 Ask user which server to modify and what changes are needed.
@@ -66,15 +66,15 @@ Make changes following the same patterns used in create workflow:
 
 Run relevant validation checkpoints:
 - [references/validation-checkpoints.md#code-syntax](../references/validation-checkpoints.md#code-syntax)
-- [references/validation-checkpoints.md#claude-code-install](../references/validation-checkpoints.md#claude-code-install)
+- [references/validation-checkpoints.md#cascade-code-install](../references/validation-checkpoints.md#cascade-code-install)
 
 Test:
 ```bash
-claude mcp list
+cascade mcp list
 # Should show ✓ Connected
 
 # Check logs for errors
-tail -20 ~/Library/Logs/Claude/mcp-server-{name}.log
+tail -20 ~/Library/Logs/Cascade/mcp-server-{name}.log
 ```
 </step>
 
@@ -83,7 +83,7 @@ tail -20 ~/Library/Logs/Claude/mcp-server-{name}.log
 <success_criteria>
 Update is complete when:
 - Changes implemented
-- Server still shows ✓ Connected in `claude mcp list`
+- Server still shows ✓ Connected in `cascade mcp list`
 - No new errors in logs
 - User confirms functionality works as expected
 </success_criteria>

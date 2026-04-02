@@ -65,7 +65,7 @@ EOF
 cat > README.md << EOF
 # $SERVER_NAME
 
-MCP server for Claude.
+MCP server for Cascade.
 
 ## Setup
 
@@ -83,10 +83,10 @@ Set required environment variables in ~/.zshrc:
 export API_KEY="your-key-here"
 \`\`\`
 
-## Install in Claude Code
+## Install in Cascade
 
 \`\`\`bash
-claude mcp add --transport stdio $SERVER_NAME \\
+cascade mcp add --transport stdio $SERVER_NAME \\
   --env API_KEY='\${API_KEY}' \\
   -- $(which node) $PROJECT_DIR/build/index.js
 \`\`\`
@@ -94,7 +94,7 @@ claude mcp add --transport stdio $SERVER_NAME \\
 ## Logs
 
 \`\`\`bash
-tail -f ~/Library/Logs/Claude/mcp-server-$SERVER_NAME.log
+tail -f ~/Library/Logs/Cascade/mcp-server-$SERVER_NAME.log
 \`\`\`
 EOF
 
@@ -105,4 +105,4 @@ echo "Next steps:"
 echo "1. Copy template to src/index.ts"
 echo "2. Run: npm run build"
 echo "3. Set environment variables"
-echo "4. Install in Claude Code"
+echo "4. Install in Cascade"

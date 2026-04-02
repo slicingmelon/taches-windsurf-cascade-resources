@@ -5,9 +5,9 @@
 set -e  # Exit on error
 
 # Verify Cascade CLI is installed
-if ! command -v claude &>/dev/null; then
+if ! command -v cascade &>/dev/null && ! command -v windsurf &>/dev/null; then
   echo "Error: Cascade CLI not found"
-  echo "Install with: npm install -g @anthropic-ai/claude-code"
+  echo "Install Windsurf and ensure the CLI is in your PATH"
   exit 1
 fi
 
@@ -45,8 +45,8 @@ BACKUP_ENABLED="${RALPH_BACKUP:-true}"  # Push to remote after each commit
 PROJECT_NAME=$(basename "$(pwd)")
 
 # Load OAuth token for headless mode (with security checks)
-TOKEN_FILE="$HOME/.claude-oauth-token"
-if [ -z "$CLAUDE_CODE_OAUTH_TOKEN" ] && [ -f "$TOKEN_FILE" ]; then
+TOKEN_FILE="$HOME/.windsurf-oauth-token"
+if [ -z "$WINDSURF_OAUTH_TOKEN" ] && [ -f "$TOKEN_FILE" ]; then
   # Security: Check file permissions (should be 600 or more restrictive)
   if [[ "$OSTYPE" == "darwin"* ]]; then
     TOKEN_PERMS=$(stat -f %Lp "$TOKEN_FILE" 2>/dev/null)
@@ -63,13 +63,13 @@ if [ -z "$CLAUDE_CODE_OAUTH_TOKEN" ] && [ -f "$TOKEN_FILE" ]; then
     fi
   fi
 
-  export CLAUDE_CODE_OAUTH_TOKEN=$(cat "$TOKEN_FILE")
+  export WINDSURF_OAUTH_TOKEN=$(cat "$TOKEN_FILE")
 fi
 
-if [ -z "$CLAUDE_CODE_OAUTH_TOKEN" ]; then
+if [ -z "$WINDSURF_OAUTH_TOKEN" ]; then
   echo "⚠️  Warning: No OAuth token found. Headless mode may fail."
-  echo "   Run 'claude setup-token' and save to ~/.claude-oauth-token"
-  echo "   Then: chmod 600 ~/.claude-oauth-token"
+  echo "   Save your Windsurf OAuth token to ~/.windsurf-oauth-token"
+  echo "   Then: chmod 600 ~/.windsurf-oauth-token"
   echo ""
 fi
 
@@ -501,15 +501,15 @@ if [ ! -f "$PROMPT_FILE" ]; then
 fi
 
 # Build Cascade CLI command as array (security: avoids eval injection)
-CLAUDE_ARGS=("--model" "$MODEL" "-p" "--dangerously-skip-permissions" "--output-format" "text")
+CASCADE_ARGS=("--model" "$MODEL" "-p" "--dangerously-skip-permissions" "--output-format" "text")
 
 if [ "$VERBOSE" = "true" ]; then
-  CLAUDE_ARGS+=("--verbose")
+  CASCADE_ARGS+=("--verbose")
 fi
 
 # Display configuration
 echo "Model: $MODEL"
-echo "Cascade args: ${CLAUDE_ARGS[*]}"
+echo "Cascade args: ${CASCADE_ARGS[*]}"
 echo "Prompt: $PROMPT_FILE"
 if [ -n "$LIMIT" ]; then
   echo "Limit: $LIMIT iterations"
@@ -572,7 +572,7 @@ while true; do
 
   # Run Cascade with prompt (tee to log file for observability)
   # Watch progress: tail -f ralph.log
-  if cat "$PROMPT_FILE" | claude "${CLAUDE_ARGS[@]}" 2>&1 | tee -a "$LOG_FILE"; then
+  if cat "$PROMPT_FILE" | cascade "${CASCADE_ARGS[@]}" 2>&1 | tee -a "$LOG_FILE"; then
     # Print iteration summary in build mode
     if [ "$MODE" = "build" ]; then
       print_iteration_summary "$ITERATION_START"

@@ -40,7 +40,7 @@ EOF
 cat > README.md << EOF
 # $SERVER_NAME
 
-MCP server for Claude.
+MCP server for Cascade.
 
 ## Setup
 
@@ -57,10 +57,10 @@ Set required environment variables in ~/.zshrc:
 export API_KEY="your-key-here"
 \`\`\`
 
-## Install in Claude Code
+## Install in Cascade
 
 \`\`\`bash
-claude mcp add --transport stdio $SERVER_NAME \\
+cascade mcp add --transport stdio $SERVER_NAME \\
   --env API_KEY='\${API_KEY}' \\
   -- $(which uv) --directory $PROJECT_DIR run python -m src.server
 \`\`\`
@@ -68,7 +68,7 @@ claude mcp add --transport stdio $SERVER_NAME \\
 ## Logs
 
 \`\`\`bash
-tail -f ~/Library/Logs/Claude/mcp-server-$SERVER_NAME.log
+tail -f ~/Library/Logs/Cascade/mcp-server-$SERVER_NAME.log
 \`\`\`
 EOF
 
@@ -78,4 +78,4 @@ echo ""
 echo "Next steps:"
 echo "1. Copy template to src/server.py"
 echo "2. Set environment variables"
-echo "3. Install in Claude Code"
+echo "3. Install in Cascade"
