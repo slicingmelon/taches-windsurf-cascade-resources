@@ -1,13 +1,13 @@
 <overview>
-Claude-executable plans have a specific format that enables Claude to implement without interpretation. This reference defines what makes a plan executable vs. vague.
+Cascade-executable plans have a specific format that enables Cascade to implement without interpretation. This reference defines what makes a plan executable vs. vague.
 
-**Key insight:** PLAN.md IS the executable prompt. It contains everything Claude needs to execute the phase, including objective, context references, tasks, verification, success criteria, and output specification.
+**Key insight:** PLAN.md IS the executable prompt. It contains everything Cascade needs to execute the phase, including objective, context references, tasks, verification, success criteria, and output specification.
 </overview>
 
 <core_principle>
-A plan is Claude-executable when Claude can read the PLAN.md and immediately start implementing without asking clarifying questions.
+A plan is Cascade-executable when Cascade can read the PLAN.md and immediately start implementing without asking clarifying questions.
 
-If Claude has to guess, interpret, or make assumptions - the task is too vague.
+If Cascade has to guess, interpret, or make assumptions - the task is too vague.
 </core_principle>
 
 <prompt_structure>
@@ -42,7 +42,7 @@ Output: [...]
 </task>
 
 <task type="checkpoint:human-verify" gate="blocking">
-  <what-built>[what Claude automated]</what-built>
+  <what-built>[what Cascade automated]</what-built>
   <how-to-verify>[numbered verification steps]</how-to-verify>
   <resume-signal>[how to continue - "approved" or describe issues]</resume-signal>
 </task>
@@ -122,7 +122,7 @@ Should be testable without subjective judgment.
 Tasks have a `type` attribute that determines how they execute:
 
 <type name="auto">
-**Default task type** - Claude executes autonomously.
+**Default task type** - Cascade executes autonomously.
 
 **Structure:**
 ```xml
@@ -135,21 +135,21 @@ Tasks have a `type` attribute that determines how they execute:
 </task>
 ```
 
-Use for: Everything Claude can do independently (code, tests, builds, file operations).
+Use for: Everything Cascade can do independently (code, tests, builds, file operations).
 </type>
 
 <type name="checkpoint:human-action">
-**RARELY USED** - Only for actions with NO CLI/API. Claude automates everything possible first.
+**RARELY USED** - Only for actions with NO CLI/API. Cascade automates everything possible first.
 
 **Structure:**
 ```xml
 <task type="checkpoint:human-action" gate="blocking">
   <action>[Unavoidable manual step - email link, 2FA code]</action>
   <instructions>
-    [What Claude already automated]
+    [What Cascade already automated]
     [The ONE thing requiring human action]
   </instructions>
-  <verification>[What Claude can check afterward]</verification>
+  <verification>[What Cascade can check afterward]</verification>
   <resume-signal>[How to continue]</resume-signal>
 </task>
 ```
@@ -158,13 +158,13 @@ Use ONLY for: Email verification links, SMS 2FA codes, manual approvals with no 
 
 Do NOT use for: Anything with a CLI (Vercel, Stripe, Upstash, Railway, GitHub), builds, tests, file creation, deployments.
 
-See: references/cli-automation.md for what Claude can automate.
+See: references/cli-automation.md for what Cascade can automate.
 
-**Execution:** Claude automates everything with CLI/API, stops only for truly unavoidable manual steps.
+**Execution:** Cascade automates everything with CLI/API, stops only for truly unavoidable manual steps.
 </type>
 
 <type name="checkpoint:human-verify">
-**Human must verify Claude's work** - Visual checks, UX testing.
+**Human must verify Cascade's work** - Visual checks, UX testing.
 
 **Structure:**
 ```xml
@@ -184,7 +184,7 @@ See: references/cli-automation.md for what Claude can automate.
 
 Use for: UI/UX verification, visual design checks, animation smoothness, accessibility testing.
 
-**Execution:** Claude builds the feature, stops, provides testing instructions, waits for approval/feedback.
+**Execution:** Cascade builds the feature, stops, provides testing instructions, waits for approval/feedback.
 </type>
 
 <type name="checkpoint:decision">
@@ -218,21 +218,21 @@ Use for: UI/UX verification, visual design checks, animation smoothness, accessi
 
 Use for: Technology selection, architecture decisions, design choices, feature prioritization.
 
-**Execution:** Claude presents options with balanced pros/cons, waits for decision, proceeds with chosen direction.
+**Execution:** Cascade presents options with balanced pros/cons, waits for decision, proceeds with chosen direction.
 </type>
 
 **When to use checkpoints:**
-- Visual/UX verification (after Claude builds) → `checkpoint:human-verify`
+- Visual/UX verification (after Cascade builds) → `checkpoint:human-verify`
 - Implementation direction choice → `checkpoint:decision`
 - Truly unavoidable manual actions (email links, 2FA) → `checkpoint:human-action` (rare)
 
 **When NOT to use checkpoints:**
-- Anything with CLI/API (Claude automates it) → `type="auto"`
+- Anything with CLI/API (Cascade automates it) → `type="auto"`
 - Deployments (Vercel, Railway, Fly) → `type="auto"` with CLI
 - Creating resources (Upstash, Stripe, GitHub) → `type="auto"` with CLI/API
 - File operations, tests, builds → `type="auto"`
 
-**Golden rule:** If Claude CAN automate it, Claude MUST automate it. See: references/cli-automation.md
+**Golden rule:** If Cascade CAN automate it, Cascade MUST automate it. See: references/cli-automation.md
 
 See `references/checkpoints.md` for comprehensive checkpoint guidance.
 </task_types>
@@ -250,7 +250,7 @@ Use @file references to load context for the prompt:
 </context>
 ```
 
-Reference files that Claude needs to understand before implementing.
+Reference files that Cascade needs to understand before implementing.
 </context_references>
 
 <verification_section>
@@ -313,7 +313,7 @@ After completion, create `.planning/phases/XX-name/SUMMARY.md`:
 </task>
 ```
 
-Claude: "How? What type? What library? Where?"
+Cascade: "How? What type? What library? Where?"
 </too_vague>
 
 <just_right>
@@ -327,11 +327,11 @@ Claude: "How? What type? What library? Where?"
 </task>
 ```
 
-Claude can implement this immediately.
+Cascade can implement this immediately.
 </just_right>
 
 <too_detailed>
-Writing the actual code in the plan. Trust Claude to implement from clear instructions.
+Writing the actual code in the plan. Trust Cascade to implement from clear instructions.
 </too_detailed>
 </specificity_levels>
 
@@ -342,7 +342,7 @@ Writing the actual code in the plan. Trust Claude to implement from clear instru
 - "Make it production-ready"
 - "Add proper error handling"
 
-These require Claude to decide WHAT to do. Specify it.
+These require Cascade to decide WHAT to do. Specify it.
 </vague_actions>
 
 <unverifiable_completion>
@@ -359,12 +359,12 @@ These require subjective judgment. Make it objective.
 - "Follow best practices"
 - "Like the other endpoints"
 
-Claude doesn't know your standards. Be explicit.
+Cascade doesn't know your standards. Be explicit.
 </missing_context>
 </anti_patterns>
 
 <sizing_tasks>
-Good task size: 15-60 minutes of Claude work.
+Good task size: 15-60 minutes of Cascade work.
 
 **Too small**: "Add import statement for bcrypt" (combine with related task)
 **Just right**: "Create login endpoint with JWT validation" (focused, specific)

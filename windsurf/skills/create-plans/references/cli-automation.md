@@ -1,15 +1,15 @@
 # CLI and API Automation Reference
 
-**Core principle:** If it has a CLI or API, Claude does it. Never ask the human to perform manual steps that Claude can automate.
+**Core principle:** If it has a CLI or API, Cascade does it. Never ask the human to perform manual steps that Cascade can automate.
 
-This reference documents what Claude CAN and SHOULD automate during plan execution.
+This reference documents what Cascade CAN and SHOULD automate during plan execution.
 
 ## Deployment Platforms
 
 ### Vercel
 **CLI:** `vercel`
 
-**What Claude automates:**
+**What Cascade automates:**
 - Create and deploy projects: `vercel --yes`
 - Set environment variables: `vercel env add KEY production`
 - Link to git repo: `vercel link`
@@ -243,9 +243,9 @@ This reference documents what Claude CAN and SHOULD automate during plan executi
 
 ## Authentication Gates
 
-**Critical distinction:** When Claude tries to use a CLI/API and gets an authentication error, this is NOT a failure - it's a gate that requires human input to unblock automation.
+**Critical distinction:** When Cascade tries to use a CLI/API and gets an authentication error, this is NOT a failure - it's a gate that requires human input to unblock automation.
 
-**Pattern: Claude encounters auth error → creates checkpoint → you authenticate → Claude continues**
+**Pattern: Cascade encounters auth error → creates checkpoint → you authenticate → Cascade continues**
 
 ### Example: Vercel CLI Not Authenticated
 
@@ -270,7 +270,7 @@ This reference documents what Claude CAN and SHOULD automate during plan executi
   <resume-signal>Type "done" when authenticated</resume-signal>
 </task>
 
-<!-- After authentication, Claude retries automatically -->
+<!-- After authentication, Cascade retries automatically -->
 
 <task type="auto">
   <name>Retry Vercel deployment</name>
@@ -301,7 +301,7 @@ This reference documents what Claude CAN and SHOULD automate during plan executi
   <resume-signal>Type "done" or paste the key</resume-signal>
 </task>
 
-<!-- After key provided, Claude writes to .env and continues -->
+<!-- After key provided, Cascade writes to .env and continues -->
 
 <task type="auto">
   <name>Save Stripe key and create webhook</name>
@@ -378,7 +378,7 @@ This reference documents what Claude CAN and SHOULD automate during plan executi
 
 ### Authentication Gate Protocol
 
-**When Claude encounters authentication error during execution:**
+**When Cascade encounters authentication error during execution:**
 
 1. **Recognize it's not a failure** - Missing auth is expected, not a bug
 2. **Stop current task** - Don't retry repeatedly
@@ -389,11 +389,11 @@ This reference documents what Claude CAN and SHOULD automate during plan executi
 7. **Continue normally** - One auth gate doesn't break the flow
 
 **Key difference from pre-planned checkpoints:**
-- Pre-planned: "I need you to do X" (wrong - Claude should automate)
+- Pre-planned: "I need you to do X" (wrong - Cascade should automate)
 - Auth gate: "I tried to automate X but need credentials to continue" (correct - unblocks automation)
 
 **This preserves agentic flow:**
-- Claude tries automation first
+- Cascade tries automation first
 - Only asks for help when blocked by credentials
 - Continues automating after unblocked
 - You never manually deploy/create resources - just provide keys
@@ -422,11 +422,11 @@ This reference documents what Claude CAN and SHOULD automate during plan executi
 </task>
 ```
 
-**Key difference:** Claude does EVERYTHING possible first (account creation, API requests), only asks human for the one thing with no automation path.
+**Key difference:** Cascade does EVERYTHING possible first (account creation, API requests), only asks human for the one thing with no automation path.
 
-## Quick Reference: "Can Claude automate this?"
+## Quick Reference: "Can Cascade automate this?"
 
-| Action | CLI/API? | Claude does it? |
+| Action | CLI/API? | Cascade does it? |
 |--------|----------|-----------------|
 | Deploy to Vercel | ✅ `vercel` | YES |
 | Create Stripe webhook | ✅ Stripe API | YES |
@@ -440,7 +440,7 @@ This reference documents what Claude CAN and SHOULD automate during plan executi
 | Click email verification link | ❌ No API | NO |
 | Enter credit card with 3DS | ❌ No API | NO |
 
-**Default answer: YES.** Unless explicitly in the "NO" category, Claude automates it.
+**Default answer: YES.** Unless explicitly in the "NO" category, Cascade automates it.
 
 ## Decision Tree
 
@@ -468,7 +468,7 @@ This reference documents what Claude CAN and SHOULD automate during plan executi
          ▼
     ┌────────────────────────────────────────┐
     │ task type="auto"                       │
-    │ Claude automates via CLI/API           │
+    │ Cascade automates via CLI/API          │
     └────────────┬───────────────────────────┘
                  │
                  ▼
@@ -480,10 +480,10 @@ This reference documents what Claude CAN and SHOULD automate during plan executi
 
 ## Summary
 
-**The rule:** If Claude CAN do it, Claude MUST do it.
+**The rule:** If Cascade CAN do it, Cascade MUST do it.
 
 Checkpoints are for:
-- **Verification** - Confirming Claude's automated work looks/behaves correctly
+- **Verification** - Confirming Cascade's automated work looks/behaves correctly
 - **Decisions** - Choosing between valid approaches
 - **True blockers** - Rare actions with literally no API/CLI (email links, 2FA)
 
@@ -494,4 +494,4 @@ Checkpoints are NOT for:
 - Writing files (use Write tool)
 - Anything with automation available
 
-**This keeps the agentic coding workflow intact - Claude does the work, you verify results.**
+**This keeps the agentic coding workflow intact - Cascade does the work, you verify results.**
